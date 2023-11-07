@@ -1,0 +1,7 @@
+.idea/
+logs/
+migrations/
+secrets/
+
+db.sqlite3
+temp*
