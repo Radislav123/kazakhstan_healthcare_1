@@ -2,6 +2,7 @@
 logs/
 migrations/
 secrets/
+webdrivers/
 
 db.sqlite3
 temp*
