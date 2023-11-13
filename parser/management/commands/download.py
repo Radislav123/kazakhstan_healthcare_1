@@ -2,7 +2,7 @@ import json
 import pathlib
 import time
 
-from parsing_helper.web_elements import ExtendedWebElement
+from parsing_helper.web_elements import ExtendedWebElement, ExtendedWebElementCollection
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.service import Service
@@ -70,5 +70,9 @@ class Command(parser_command.ParserCommand):
             pass
         else:
             self.driver.back()
+
+        for report_path in models.ReportPath.objects.filter(download = True):
+            reports_page.open_report(report_path)
+            reports_page = ReportsPage(self.driver)
 
         input()

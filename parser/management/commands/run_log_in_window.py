@@ -37,7 +37,9 @@ class Command(parser_command.ParserCommand):
     def log_in(self) -> None:
         page = LogInPage(self.driver)
         page.log_in(self.settings.secrets.log_in_settings.iin, self.settings.secrets.log_in_settings.password)
-        input("Нажмите ввод (enter) после выбора ЕЦП. Не закрывайте браузер, он должен закрыться сам.")
+        input_text = ["Нажмите ввод (enter) после выбора ЕЦП.",
+                      "Не закрывайте браузер, он должен закрыться сам после ввода (enter)."]
+        input(' '.join(input_text))
         with open(self.settings.AUTH_COOKIES_PATH, 'w') as file:
             json.dump(self.driver.get_cookies(), file, indent = 4)
 
