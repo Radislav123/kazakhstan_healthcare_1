@@ -34,19 +34,10 @@ class Command(parser_command.ParserCommand):
         self.driver = Chrome(options = options, service = service)
         self.driver.maximize_window()
 
-    # todo: remove method?
-    # todo: remove LOG_IN_DRIVER_DATA_PATH?
-    def write_driver_info(self, driver: Chrome) -> None:
-        with open(self.settings.LOG_IN_DRIVER_DATA_PATH, 'w') as file:
-            # noinspection PyProtectedMember
-            json.dump({"url": driver.command_executor._url, "session_id": driver.session_id}, file, indent = 4)
-
     def log_in(self) -> None:
         page = LogInPage(self.driver)
-        page.open()
         page.log_in(self.settings.secrets.log_in_settings.iin, self.settings.secrets.log_in_settings.password)
-        input("Нажмите ввод (enter) после выбора ЕЦП.")
-        self.write_driver_info(self.driver)
+        input("Нажмите ввод (enter) после выбора ЕЦП. Не закрывайте браузер, он должен закрыться сам.")
         with open(self.settings.AUTH_COOKIES_PATH, 'w') as file:
             json.dump(self.driver.get_cookies(), file, indent = 4)
 

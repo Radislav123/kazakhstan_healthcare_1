@@ -15,6 +15,7 @@ class LogInPage(base_page.BasePage):
         self.enter_button = ExtendedWebElement(self, '//button[@type = "submit" and contains(@class, "primary")]')
 
     def log_in(self, iin: int, password: str) -> None:
+        self.open()
         self.iin_input.send_keys(str(iin))
         self.password_input.send_keys(password)
         self.enter_button.click()

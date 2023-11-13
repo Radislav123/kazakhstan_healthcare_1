@@ -2,12 +2,14 @@ import json
 import pathlib
 import time
 
+from parsing_helper.web_elements import ExtendedWebElement
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 
-from pages import LogInPage
+from pages import LogInPage, ReportsLogInPage, ReportsPage
 from parser import models
 from parser.management.commands import parser_command
 
@@ -50,8 +52,23 @@ class Command(parser_command.ParserCommand):
             self.driver.quit()
 
     def run(self) -> None:
-        page = LogInPage(self.driver)
+        log_in_page = LogInPage(self.driver)
         with open(self.settings.AUTH_COOKIES_PATH) as file:
             cookies = json.load(file)
-            page.set_cookies(cookies)
-        time.sleep(10000)
+            log_in_page.set_cookies(cookies)
+
+        reports_log_in_page = ReportsLogInPage(self.driver)
+        reports_log_in_page.log_in()
+
+        reports_page = ReportsPage(self.driver)
+        reports_page.open()
+        time.sleep(3)
+        checker = ExtendedWebElement(reports_page, '//h1[contains(text(), "Ошибка сервера в приложении")]')
+        try:
+            checker.init()
+        except TimeoutException:
+            pass
+        else:
+            self.driver.back()
+
+        input()
