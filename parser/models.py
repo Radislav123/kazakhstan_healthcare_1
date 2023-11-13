@@ -37,4 +37,4 @@ class ParsingSettings(SingletonModel):
     class Meta:
         verbose_name_plural = "parsing settings"
 
-    show_browser = models.BooleanField("Показывать ли браузер", default = False)
+    show_browser = models.BooleanField("Показывать браузер", default = False)
