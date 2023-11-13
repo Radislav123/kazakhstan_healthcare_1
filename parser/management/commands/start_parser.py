@@ -1,10 +1,13 @@
+import json
 import pathlib
+import time
 
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 
+from pages import LogInPage
 from parser import models
 from parser.management.commands import parser_command
 
@@ -15,10 +18,10 @@ class Command(parser_command.ParserCommand):
 
     def handle(self, *args, **options) -> None:
         try:
-            self.before_parsing()
+            self.before_command()
             self.run()
         finally:
-            self.after_parsing()
+            self.after_command()
 
     def prepare_driver(self) -> None:
         driver_options = ChromeOptions()
@@ -38,12 +41,17 @@ class Command(parser_command.ParserCommand):
         self.driver.maximize_window()
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
 
-    def before_parsing(self) -> None:
+    def before_command(self) -> None:
         self.parsing_settings = models.ParsingSettings.get()
         self.prepare_driver()
 
-    def after_parsing(self) -> None:
-        self.driver.quit()
+    def after_command(self) -> None:
+        if hasattr(self, "driver"):
+            self.driver.quit()
 
     def run(self) -> None:
-        pass
+        page = LogInPage(self.driver)
+        with open(self.settings.AUTH_COOKIES_PATH) as file:
+            cookies = json.load(file)
+            page.set_cookies(cookies)
+        time.sleep(10000)

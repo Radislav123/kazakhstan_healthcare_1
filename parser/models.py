@@ -33,6 +33,15 @@ class DownloadSettings(SingletonModel):
     download_folder = models.CharField("Папка для скачивания", max_length = 1000, validators = [validate_path])
 
 
+class LogInSettings(SingletonModel):
+    class Meta:
+        verbose_name_plural = "log in settings"
+
+    iin = models.IntegerField("ИИН")
+    password = models.CharField("Пароль", max_length = 100)
+    digital_signature_path = models.CharField("Путь ЭЦП", max_length = 1000, validators = [validate_path])
+
+
 class ParsingSettings(SingletonModel):
     class Meta:
         verbose_name_plural = "parsing settings"

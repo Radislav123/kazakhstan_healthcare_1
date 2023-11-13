@@ -11,9 +11,13 @@ class DownloadSettingsAdmin(BaseAdmin):
     model = models.DownloadSettings
 
 
+class LogInSettingsAdmin(BaseAdmin):
+    model = models.LogInSettings
+
+
 class ParsingSettingsAdmin(BaseAdmin):
     model = models.ParsingSettings
 
 
-model_admins_to_register = [DownloadSettingsAdmin, ParsingSettingsAdmin]
+model_admins_to_register = [DownloadSettingsAdmin, LogInSettingsAdmin, ParsingSettingsAdmin]
 helper_admin.register_models(model_admins_to_register)
