@@ -20,7 +20,6 @@ class DownloadNotFinishedException(Exception):
     pass
 
 
-# todo: merge download and log_in
 class Command(parser_command.ParserCommand):
     driver: Chrome
 
