@@ -15,6 +15,8 @@ class SingletonModel(BaseModel):
     class Meta:
         abstract = True
 
+    _object: Self = None
+
     def save(self, *args, **kwargs) -> None:
         obj = self.__class__.objects.all().first()
         if obj is not None:
@@ -23,7 +25,9 @@ class SingletonModel(BaseModel):
 
     @classmethod
     def get(cls) -> Self:
-        return cls.objects.all().first()
+        if cls._object is None:
+            cls._object = cls.objects.all().first()
+        return cls._object
 
 
 class DownloadSettings(SingletonModel):
@@ -32,6 +36,9 @@ class DownloadSettings(SingletonModel):
 
     folder = models.CharField("Папка для скачивания", max_length = 1000, validators = [validate_path])
     format = models.CharField("Формат скачивания", max_length = 100)
+    # в секундах
+    max_download_waiting = models.IntegerField("Максимальное время ожидания скачивания")
+    download_check_period = models.IntegerField("Период проверки скачивания")
 
 
 class LogInSettings(SingletonModel):
@@ -51,8 +58,10 @@ class ParsingSettings(SingletonModel):
     show_browser = models.BooleanField("Показывать браузер", default = False)
 
 
-class ReportPath(BaseModel):
+class Report(BaseModel):
     download = models.BooleanField("Скачивать")
+    folder = models.CharField("Папка для скачивания", max_length = 1000)
+    name = models.CharField("Название файла", max_length = 255)
     step_1 = models.CharField("Шаг 1", max_length = 1000, null = True)
     step_2 = models.CharField("Шаг 2", max_length = 1000, null = True)
     step_3 = models.CharField("Шаг 3", max_length = 1000, null = True)
@@ -60,8 +69,6 @@ class ReportPath(BaseModel):
     step_5 = models.CharField("Шаг 5", max_length = 1000, null = True)
     step_6 = models.CharField("Шаг 6", max_length = 1000, null = True)
     step_7 = models.CharField("Шаг 7", max_length = 1000, null = True)
-    step_8 = models.CharField("Шаг 8", max_length = 1000, null = True)
-    step_9 = models.CharField("Шаг 9", max_length = 1000, null = True)
 
     def get_step_path(self, step: int) -> str | None:
         return getattr(self, f"step_{step}")

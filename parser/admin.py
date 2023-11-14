@@ -19,10 +19,10 @@ class ParsingSettingsAdmin(BaseAdmin):
     model = models.ParsingSettings
 
 
-class ReportPathAdmin(BaseAdmin):
-    model = models.ReportPath
-    not_required_fields = set(f"step_{x}" for x in range(1, 10))
+class ReportAdmin(BaseAdmin):
+    model = models.Report
+    not_required_fields = set(f"step_{x}" for x in range(1, 8))
 
 
-model_admins_to_register = [DownloadSettingsAdmin, LogInSettingsAdmin, ParsingSettingsAdmin, ReportPathAdmin]
+model_admins_to_register = [DownloadSettingsAdmin, LogInSettingsAdmin, ParsingSettingsAdmin, ReportAdmin]
 helper_admin.register_models(model_admins_to_register)

@@ -1,8 +1,10 @@
 import json
+import os
 import pathlib
+import shutil
 import time
+from pathlib import Path
 
-from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.service import Service
@@ -14,8 +16,11 @@ from parser import models
 from parser.management.commands import parser_command
 
 
+class DownloadNotFinishedException(Exception):
+    pass
+
+
 # todo: merge download and log_in
-# todo: check download end (clear downloaded files after work)
 class Command(parser_command.ParserCommand):
     driver: Chrome
 
@@ -31,6 +36,7 @@ class Command(parser_command.ParserCommand):
 
     def after_command(self) -> None:
         if hasattr(self, "driver"):
+            self.driver.close()
             self.driver.quit()
 
     def prepare_driver(self) -> None:
@@ -46,7 +52,7 @@ class Command(parser_command.ParserCommand):
         driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         driver_options.add_experimental_option(
             "prefs",
-            {"download.default_directory": models.DownloadSettings.get().folder}
+            {"download.default_directory": self.settings.TEMP_DOWNLOAD_FOLDER}
         )
 
         cache_manager = DriverCacheManager(root_dir = f"{pathlib.Path.cwd()}/webdrivers/{self.settings.APP_NAME}")
@@ -57,6 +63,26 @@ class Command(parser_command.ParserCommand):
         self.driver.maximize_window()
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
 
+    def wait_download(self) -> None:
+        download_settings = models.DownloadSettings.get()
+        for timer in range(download_settings.max_download_waiting):
+            time.sleep(download_settings.download_check_period)
+            for file in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER):
+                if file.endswith(".tmp"):
+                    break
+            else:
+                break
+        else:
+            raise DownloadNotFinishedException()
+
+    def move(self, report: models.Report) -> None:
+        files = {os.path.getctime(file): file for file in
+                 (f"{self.settings.TEMP_DOWNLOAD_FOLDER}/{x}" for x in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER))}
+        last_file: str = files[max(files)]
+        folder = Path(f"{models.DownloadSettings.get().folder}/{report.folder}")
+        Path(folder).mkdir(parents = True, exist_ok = True)
+        os.replace(last_file, f"{folder}/{report.name}.{last_file.split('.')[-1]}")
+
     def run(self) -> None:
         log_in_page = LogInPage(self.driver)
         with open(self.settings.AUTH_COOKIES_PATH) as file:
@@ -66,22 +92,20 @@ class Command(parser_command.ParserCommand):
         reports_log_in_page = ReportsLogInPage(self.driver)
         reports_log_in_page.log_in()
 
-        reports_page = ReportsPage(self.driver)
-        reports_page.open()
-        time.sleep(3)
-        checker = ExtendedWebElement(reports_page, '//h1[contains(text(), "Ошибка сервера в приложении")]')
-        try:
-            checker.init()
-        except TimeoutException:
-            pass
-        else:
-            self.driver.back()
-
-        for report_path in models.ReportPath.objects.filter(download = True):
-            reports_page.open_report(report_path)
+        for report in models.Report.objects.filter(download = True):
             reports_page = ReportsPage(self.driver)
+            reports_page.open_report(report)
             reports_page.form_button.click()
-            time.sleep(3)
-            reports_page.format_selector.click()
+            try:
+                reports_page.format_selector.click()
+            except TimeoutException:
+                reports_page.form_button.reset()
+                reports_page.form_button.click()
+                reports_page.format_selector.click()
             reports_page.form_option.click()
             reports_page.download_button.click()
+            self.wait_download()
+            self.move(report)
+
+        if self.settings.CLEAR_TEMP_DOWNLOAD_FOLDER:
+            shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)

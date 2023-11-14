@@ -23,11 +23,11 @@ class Command(create_admin.CreateAdminCommand):
         parsing_settings.save()
         self.logger.info(f"The {parsing_settings} was created.")
 
-        models.ReportPath.objects.all().delete()
+        models.Report.objects.all().delete()
         report_paths = []
-        for report_path in self.settings.secrets.report_paths.paths:
-            report_paths.append(models.ReportPath(**report_path))
-        models.ReportPath.objects.bulk_create(report_paths)
+        for report_path in self.settings.secrets.reports.paths:
+            report_paths.append(models.Report(**report_path))
+        models.Report.objects.bulk_create(report_paths)
         if len(report_paths) == 1:
             self.logger.info(f"{len(report_paths)} report path object was created.")
         else:

@@ -13,6 +13,8 @@ class SecretKeeper(secret_keeper.SecretKeeper):
     class DownloadSettings(Module):
         folder: str
         format: str
+        max_download_waiting: int
+        download_check_period: int
 
     class LogInSettings(Module):
         iin: int
@@ -23,13 +25,13 @@ class SecretKeeper(secret_keeper.SecretKeeper):
     class ParsingSettings(Module):
         show_browser: bool
 
-    class ReportPaths(Module):
+    class Reports(Module):
         paths: list[dict[str, str]]
 
     download_settings: DownloadSettings
     log_in_settings: LogInSettings
     parsing_settings: ParsingSettings
-    report_paths: ReportPaths
+    reports: Reports
 
     def __init__(self, settings: "Settings") -> None:
         super().__init__(settings)
@@ -37,4 +39,4 @@ class SecretKeeper(secret_keeper.SecretKeeper):
         self.add_module("download_settings", settings.DOWNLOAD_SETTINGS_PATH)
         self.add_module("log_in_settings", settings.LOG_IN_SETTINGS_PATH)
         self.add_module("parsing_settings", settings.PARSING_SETTINGS_PATH)
-        self.add_module("report_paths", settings.REPORT_PATHS_PATH)
+        self.add_module("reports", settings.REPORT_PATHS_PATH)

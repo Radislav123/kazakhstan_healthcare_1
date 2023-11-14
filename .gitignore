@@ -3,7 +3,7 @@ logs/
 migrations/
 secrets/
 webdrivers/
-downloads/
+downloads*/
 
 db.sqlite3
 temp*

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from parsing_helper import settings as helper_settings
 
 from .apps import ParserConfig
@@ -8,6 +10,9 @@ class Settings(helper_settings.Settings):
 
     def __init__(self):
         super().__init__()
+        # Настройки Selenium
+        # в секундах
+        self.SELENIUM_DEFAULT_TIMEOUT = 30
 
         # Пути предопределенных настроек
         self.SETTINGS_FOLDER = f"{self.SECRETS_FOLDER}/settings"
@@ -21,3 +26,6 @@ class Settings(helper_settings.Settings):
 
         self.JS_CODE_FOLDER = "js"
         self.JS_REPLACE_CERTIFICATE_PATH = f"{self.JS_CODE_FOLDER}/replaceCertificate.js"
+
+        self.TEMP_DOWNLOAD_FOLDER = str(Path(f"{Path(__file__).resolve().parent.parent}/downloads_temp").resolve())
+        self.CLEAR_TEMP_DOWNLOAD_FOLDER = True
