@@ -30,7 +30,8 @@ class DownloadSettings(SingletonModel):
     class Meta:
         verbose_name_plural = "download settings"
 
-    download_folder = models.CharField("Папка для скачивания", max_length = 1000, validators = [validate_path])
+    folder = models.CharField("Папка для скачивания", max_length = 1000, validators = [validate_path])
+    format = models.CharField("Формат скачивания", max_length = 100)
 
 
 class LogInSettings(SingletonModel):

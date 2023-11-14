@@ -2,7 +2,7 @@ import json
 import pathlib
 import time
 
-from parsing_helper.web_elements import ExtendedWebElement, ExtendedWebElementCollection
+from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.service import Service
@@ -34,6 +34,10 @@ class Command(parser_command.ParserCommand):
             driver_options.add_argument("--headless")
         driver_options.add_argument("--window-size=1920,1080")
         driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        driver_options.add_experimental_option(
+            "prefs",
+            {"download.default_directory": models.DownloadSettings.get().folder}
+        )
 
         cache_manager = DriverCacheManager(root_dir = f"{pathlib.Path.cwd()}/webdrivers/{self.settings.APP_NAME}")
         driver_manager = ChromeDriverManager(cache_manager = cache_manager).install()
@@ -49,6 +53,7 @@ class Command(parser_command.ParserCommand):
 
     def after_command(self) -> None:
         if hasattr(self, "driver"):
+            self.driver.close()
             self.driver.quit()
 
     def run(self) -> None:
@@ -74,5 +79,10 @@ class Command(parser_command.ParserCommand):
         for report_path in models.ReportPath.objects.filter(download = True):
             reports_page.open_report(report_path)
             reports_page = ReportsPage(self.driver)
+            reports_page.form_button.click()
+            reports_page.format_selector.click()
+            reports_page.form_option.click()
+            reports_page.download_button.click()
 
+        # todo: remove input
         input()

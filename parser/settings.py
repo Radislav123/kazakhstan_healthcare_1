@@ -16,5 +16,5 @@ class Settings(helper_settings.Settings):
         self.PARSING_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/parsing.json"
         self.REPORT_PATHS_PATH = f"{self.SETTINGS_FOLDER}/report_paths.json"
 
-        self.LOG_IN_FOLDER = f"{self.SECRETS_FOLDER}/log_in_driver"
+        self.LOG_IN_FOLDER = f"{self.SECRETS_FOLDER}/log_in"
         self.AUTH_COOKIES_PATH = f"{self.LOG_IN_FOLDER}/cookies.json"
