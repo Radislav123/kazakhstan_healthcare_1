@@ -11,14 +11,17 @@ class SecretKeeper(secret_keeper.SecretKeeper):
     Module = secret_keeper.SecretKeeper.Module
 
     class DownloadSettings(Module):
-        download_folder: str
+        folder: str
+        format: str
 
     class LogInSettings(Module):
         iin: int
         password: str
+        digital_signature_path: str
+        digital_signature_password: str
 
     class ParsingSettings(Module):
-        show_folder: bool
+        show_browser: bool
 
     class ReportPaths(Module):
         paths: list[dict[str, str]]

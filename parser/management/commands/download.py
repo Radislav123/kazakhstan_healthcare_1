@@ -14,9 +14,10 @@ from parser import models
 from parser.management.commands import parser_command
 
 
+# todo: merge download and log_in
+# todo: check download end (clear downloaded files after work)
 class Command(parser_command.ParserCommand):
     driver: Chrome
-    parsing_settings: models.ParsingSettings
 
     def handle(self, *args, **options) -> None:
         try:
@@ -25,12 +26,21 @@ class Command(parser_command.ParserCommand):
         finally:
             self.after_command()
 
+    def before_command(self) -> None:
+        self.prepare_driver()
+
+    def after_command(self) -> None:
+        if hasattr(self, "driver"):
+            self.driver.quit()
+
     def prepare_driver(self) -> None:
+        parsing_settings = models.ParsingSettings.get()
+
         driver_options = ChromeOptions()
         # этот параметр тоже нужен, так как в режиме headless с некоторыми элементами нельзя взаимодействовать
         driver_options.add_argument("--no-sandbox")
         driver_options.add_argument("--disable-blink-features=AutomationControlled")
-        if not self.parsing_settings.show_browser:
+        if not parsing_settings.show_browser:
             driver_options.add_argument("--headless")
         driver_options.add_argument("--window-size=1920,1080")
         driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
@@ -46,15 +56,6 @@ class Command(parser_command.ParserCommand):
         self.driver = Chrome(options = driver_options, service = driver_service)
         self.driver.maximize_window()
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
-
-    def before_command(self) -> None:
-        self.parsing_settings = models.ParsingSettings.get()
-        self.prepare_driver()
-
-    def after_command(self) -> None:
-        if hasattr(self, "driver"):
-            self.driver.close()
-            self.driver.quit()
 
     def run(self) -> None:
         log_in_page = LogInPage(self.driver)
@@ -80,9 +81,7 @@ class Command(parser_command.ParserCommand):
             reports_page.open_report(report_path)
             reports_page = ReportsPage(self.driver)
             reports_page.form_button.click()
+            time.sleep(3)
             reports_page.format_selector.click()
             reports_page.form_option.click()
             reports_page.download_button.click()
-
-        # todo: remove input
-        input()

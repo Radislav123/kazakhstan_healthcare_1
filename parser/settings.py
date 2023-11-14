@@ -18,3 +18,6 @@ class Settings(helper_settings.Settings):
 
         self.LOG_IN_FOLDER = f"{self.SECRETS_FOLDER}/log_in"
         self.AUTH_COOKIES_PATH = f"{self.LOG_IN_FOLDER}/cookies.json"
+
+        self.JS_CODE_FOLDER = "js"
+        self.JS_REPLACE_CERTIFICATE_PATH = f"{self.JS_CODE_FOLDER}/replaceCertificate.js"
