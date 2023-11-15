@@ -5,9 +5,3 @@ from parser import settings
 
 class ParserCommand(django_command.BaseCommand):
     settings = settings.Settings()
-
-    def before_command(self) -> None:
-        raise NotImplementedError()
-
-    def after_command(self) -> None:
-        raise NotImplementedError()

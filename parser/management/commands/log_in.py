@@ -1,63 +1,15 @@
 import datetime
 import json
-import pathlib
 
 import cryptography.x509.name
 from cryptography.hazmat.primitives.serialization import Encoding, pkcs12
-from selenium.webdriver import Chrome, ChromeOptions
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.driver_cache import DriverCacheManager
 
 from pages import DigitalLogInPage, LogInPage
 from parser import models
-from parser.management.commands import parser_command
+from parser.management.commands import parser_browser_command
 
 
-class Command(parser_command.ParserCommand):
-    help = "Открывает окно для авторизации на сайте"
-    driver: Chrome
-
-    def handle(self, *args, **options):
-        try:
-            self.before_command()
-            self.log_in()
-        finally:
-            self.after_command()
-
-    def before_command(self) -> None:
-        self.prepare_driver()
-
-    def after_command(self) -> None:
-        if hasattr(self, "driver"):
-            self.driver.close()
-            self.driver.quit()
-
-    def prepare_driver(self) -> None:
-        parsing_settings = models.ParsingSettings.get()
-
-        driver_options = ChromeOptions()
-        # этот параметр тоже нужен, так как в режиме headless с некоторыми элементами нельзя взаимодействовать
-        driver_options.add_argument("--no-sandbox")
-        driver_options.add_argument("--disable-blink-features=AutomationControlled")
-        if not parsing_settings.show_browser:
-            driver_options.add_argument("--headless")
-            driver_options.add_argument("--disable-gpu")
-        driver_options.add_argument("--window-size=1920,1080")
-        driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        driver_options.add_experimental_option(
-            "prefs",
-            {"download.default_directory": models.DownloadSettings.get().folder}
-        )
-
-        cache_manager = DriverCacheManager(root_dir = f"{pathlib.Path.cwd()}/webdrivers/{self.settings.APP_NAME}")
-        driver_manager = ChromeDriverManager(cache_manager = cache_manager).install()
-        driver_service = Service(executable_path = driver_manager)
-
-        self.driver = Chrome(options = driver_options, service = driver_service)
-        self.driver.maximize_window()
-        self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
-
+class Command(parser_browser_command.ParserBrowserCommand):
     @staticmethod
     def get_subject_data(obj: cryptography.x509.name.Name) -> dict[str, str]:
         not_prepared_data = dict(x.rfc4514_string().split('=') for x in obj.rdns)
@@ -101,7 +53,7 @@ class Command(parser_command.ParserCommand):
             script = script.replace(f"{key}_placeholder", value)
         return script
 
-    def log_in(self) -> None:
+    def run(self) -> None:
         log_in_page = LogInPage(self.driver)
         log_in_page.log_in(self.settings.secrets.log_in_settings.iin, self.settings.secrets.log_in_settings.password)
 
