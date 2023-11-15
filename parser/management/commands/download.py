@@ -26,11 +26,17 @@ class Command(parser_browser_command.ParserBrowserCommand):
         else:
             raise DownloadNotFinishedException()
 
-    def move(self, report: models.Report) -> None:
+    def move(self, log_in_settings: models.LogInSettings, report: models.Report) -> None:
         files = {os.path.getctime(file): file for file in
                  (f"{self.settings.TEMP_DOWNLOAD_FOLDER}/{x}" for x in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER))}
         last_file: str = files[max(files)]
-        folder = Path(f"{models.DownloadSettings.get().folder}/{report.folder}")
+
+        folder = models.DownloadSettings.get().folder
+        if log_in_settings.folder:
+            folder += f"/{log_in_settings.folder}"
+        if report.folder:
+            folder += f"/{report.folder}"
+
         Path(folder).mkdir(parents = True, exist_ok = True)
         os.replace(last_file, f"{folder}/{report.name}.{last_file.split('.')[-1]}")
 
@@ -42,10 +48,10 @@ class Command(parser_browser_command.ParserBrowserCommand):
                 if file.endswith(self.settings.NOT_DOWNLOADED_EXTENSION):
                     os.remove(file)
 
-    def run(self) -> None:
+    def run(self, log_in_settings: models.LogInSettings) -> None:
         self.remove_not_downloaded()
         log_in_page = LogInPage(self.driver)
-        with open(self.settings.AUTH_COOKIES_PATH) as file:
+        with open(self.get_cookies_path(log_in_settings)) as file:
             cookies = json.load(file)
             log_in_page.set_cookies(cookies)
 
@@ -61,7 +67,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
                     reports_page.set_period()
                     reports_page.download_report()
                     self.wait_download()
-                    self.move(report)
+                    self.move(log_in_settings, report)
                     break
                 except Exception as error:
                     counter -= 1

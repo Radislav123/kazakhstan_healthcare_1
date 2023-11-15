@@ -13,6 +13,7 @@ class DownloadSettingsAdmin(BaseAdmin):
 
 class LogInSettingsAdmin(BaseAdmin):
     model = models.LogInSettings
+    not_required_fields = {"folder", }
 
 
 class ParsingSettingsAdmin(BaseAdmin):
@@ -22,6 +23,7 @@ class ParsingSettingsAdmin(BaseAdmin):
 class ReportAdmin(BaseAdmin):
     model = models.Report
     not_required_fields = set(f"step_{x}" for x in range(1, 8))
+    not_required_fields.add("folder")
 
 
 model_admins_to_register = [DownloadSettingsAdmin, LogInSettingsAdmin, ParsingSettingsAdmin, ReportAdmin]

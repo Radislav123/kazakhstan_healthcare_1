@@ -39,9 +39,8 @@ class DigitalLogInPage(base_page.BasePage):
         return ".".join(date.date().isoformat().split('-')[::-1])
 
     @classmethod
-    def read_certificate(cls) -> dict[str, str]:
+    def read_certificate(cls, log_in_settings: models.LogInSettings) -> dict[str, str]:
         data = {}
-        log_in_settings = models.LogInSettings.get()
         with open(log_in_settings.digital_signature_path, "rb") as file:
             _, certificate, _ = pkcs12.load_key_and_certificates(
                 file.read(),
@@ -53,19 +52,19 @@ class DigitalLogInPage(base_page.BasePage):
             data.update(cls.get_subject_data(certificate.subject))
         return data
 
-    def get_js_script(self) -> str:
-        data = self.read_certificate()
+    def get_js_script(self, log_in_settings: models.LogInSettings) -> str:
+        data = self.read_certificate(log_in_settings)
         with open(self.settings.JS_REPLACE_CERTIFICATE_PATH, 'r') as file:
             script = file.read()
         for key, value in data.items():
             script = script.replace(f"{key}_placeholder", value)
         return script
 
-    def log_in(self) -> None:
+    def log_in(self, log_in_settings: models.LogInSettings) -> None:
         # не надо открывать страницу, так как это сбрасывает ввод ЭЦП
         # self.open()
 
-        js_script = self.get_js_script()
+        js_script = self.get_js_script(log_in_settings)
         self.driver.execute_script(js_script)
 
         self.enter_button.click()

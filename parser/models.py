@@ -39,14 +39,15 @@ class DownloadSettings(SingletonModel):
     # в секундах
     max_download_waiting = models.IntegerField("Максимальное время ожидания скачивания")
     download_check_period = models.IntegerField("Период проверки скачивания")
-    begin_date = models.DateField()
-    end_date = models.DateField()
+    begin_date = models.DateField("Начало периода")
+    end_date = models.DateField("Конец периода")
 
 
-class LogInSettings(SingletonModel):
+class LogInSettings(BaseModel):
     class Meta:
         verbose_name_plural = "log in settings"
 
+    folder = models.CharField("Папка для скачивания", max_length = 1000, null = True)
     iin = models.IntegerField("ИИН")
     password = models.CharField("Пароль", max_length = 100)
     digital_signature_path = models.CharField("Путь ЭЦП", max_length = 1000, validators = [validate_path])
@@ -62,7 +63,7 @@ class ParsingSettings(SingletonModel):
 
 class Report(BaseModel):
     download = models.BooleanField("Скачивать")
-    folder = models.CharField("Папка для скачивания", max_length = 1000)
+    folder = models.CharField("Папка для скачивания", max_length = 1000, null = True)
     name = models.CharField("Название файла", max_length = 255)
     step_1 = models.CharField("Шаг 1", max_length = 1000, null = True)
     step_2 = models.CharField("Шаг 2", max_length = 1000, null = True)

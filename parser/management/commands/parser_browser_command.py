@@ -15,11 +15,13 @@ class ParserBrowserCommand(parser_command.ParserCommand):
     driver: Chrome
 
     def handle(self, *args, **options) -> None:
-        try:
-            self.before_command()
-            self.run()
-        finally:
-            self.after_command()
+        logins = models.LogInSettings.objects.all()
+        for log_in_settings in logins:
+            try:
+                self.before_command()
+                self.run(log_in_settings)
+            finally:
+                self.after_command()
 
     def before_command(self) -> None:
         self.prepare_chrome_driver()
@@ -78,5 +80,8 @@ class ParserBrowserCommand(parser_command.ParserCommand):
         )
         self.driver.maximize_window()
 
-    def run(self) -> None:
+    def run(self, log_in_settings: models.LogInSettings) -> None:
         raise NotImplementedError()
+
+    def get_cookies_path(self, log_in_settings: models.LogInSettings) -> str:
+        return self.settings.AUTH_COOKIES_PATH.replace("placeholder", str(log_in_settings.id))
