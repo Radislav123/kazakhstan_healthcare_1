@@ -1,1 +1,1 @@
-venv\scripts\python manage.py runserver
+..\venv\scripts\python ..\manage.py runserver
