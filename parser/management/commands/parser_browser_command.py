@@ -1,9 +1,11 @@
 import pathlib
 
-from selenium.webdriver import Chrome, ChromeOptions
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
+from webdriver_manager.firefox import GeckoDriverManager
 
 from parser import models
 from parser.management.commands import parser_command
@@ -20,14 +22,14 @@ class ParserBrowserCommand(parser_command.ParserCommand):
             self.after_command()
 
     def before_command(self) -> None:
-        self.prepare_driver()
+        self.prepare_chrome_driver()
 
     def after_command(self) -> None:
         if hasattr(self, "driver"):
             self.driver.close()
             self.driver.quit()
 
-    def prepare_driver(self) -> None:
+    def prepare_chrome_driver(self) -> None:
         parsing_settings = models.ParsingSettings.get()
 
         driver_options = ChromeOptions()
@@ -46,11 +48,35 @@ class ParserBrowserCommand(parser_command.ParserCommand):
 
         cache_manager = DriverCacheManager(root_dir = f"{pathlib.Path.cwd()}/webdrivers/{self.settings.APP_NAME}")
         driver_manager = ChromeDriverManager(cache_manager = cache_manager).install()
-        driver_service = Service(executable_path = driver_manager)
+        driver_service = ChromeService(executable_path = driver_manager)
 
         self.driver = Chrome(options = driver_options, service = driver_service)
         self.driver.maximize_window()
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
+
+    def prepare_firefox_driver(self) -> None:
+        parsing_settings = models.ParsingSettings.get()
+
+        driver_options = FirefoxOptions()
+        if not parsing_settings.show_browser:
+            driver_options.add_argument("--headless")
+        driver_options.add_argument("--width=1920")
+        driver_options.add_argument("--height=1080")
+        driver_options.set_preference("browser.download.dir", self.settings.TEMP_DOWNLOAD_FOLDER)
+        driver_options.set_preference("javascript.enabled", True)
+        driver_options.set_preference("dom.serviceWorkers.enabled", True)
+
+        cache_manager = DriverCacheManager(root_dir = f"{pathlib.Path.cwd()}/webdrivers/{self.settings.APP_NAME}")
+        driver_manager = GeckoDriverManager(cache_manager = cache_manager).install()
+        driver_service = FirefoxService(executable_path = driver_manager)
+
+        self.driver = Firefox(
+            options = driver_options,
+            service = driver_service,
+            # todo: местоположение не меняется, хотя должно
+            log_path = f"{self.settings.LOG_FOLDER}/geckodriver.log"
+        )
+        self.driver.maximize_window()
 
     def run(self) -> None:
         raise NotImplementedError()

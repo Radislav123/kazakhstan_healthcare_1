@@ -1,6 +1,11 @@
+import datetime
+
+import cryptography.x509.name
+from cryptography.hazmat.primitives.serialization import Encoding, pkcs12
 from parsing_helper.web_elements import ExtendedWebElement
 
 from pages import base_page
+from parser import models
 
 
 # https://www.eisz.kz/edslogin
@@ -13,8 +18,54 @@ class DigitalLogInPage(base_page.BasePage):
         self.enter_button = ExtendedWebElement(self, '//button[@id = "edsLoginBtn"]')
         self.choose_certificate_button = ExtendedWebElement(self, '//button[@onclick]')
 
+    @staticmethod
+    def get_subject_data(obj: cryptography.x509.name.Name) -> dict[str, str]:
+        not_prepared_data = dict(x.rfc4514_string().split('=') for x in obj.rdns)
+        data = {}
+
+        for key, value in not_prepared_data.items():
+            if "iin" in value.lower():
+                data["iin"] = str(int(value[3:]))
+                break
+            else:
+                data["iin"] = "-1"
+        data["email"] = ""
+        data["fio"] = f"{not_prepared_data['CN']} {not_prepared_data['2.5.4.42']}"
+
+        return data
+
+    @staticmethod
+    def prepare_date(date: datetime.datetime) -> str:
+        return ".".join(date.date().isoformat().split('-')[::-1])
+
+    @classmethod
+    def read_certificate(cls) -> dict[str, str]:
+        data = {}
+        log_in_settings = models.LogInSettings.get()
+        with open(log_in_settings.digital_signature_path, "rb") as file:
+            _, certificate, _ = pkcs12.load_key_and_certificates(
+                file.read(),
+                log_in_settings.digital_signature_password.encode()
+            )
+            data["not_before"] = cls.prepare_date(certificate.not_valid_before)
+            data["not_after"] = cls.prepare_date(certificate.not_valid_after)
+            data["certificate"] = "".join(certificate.public_bytes(Encoding.PEM).decode().split('\n')[1:-2])
+            data.update(cls.get_subject_data(certificate.subject))
+        return data
+
+    def get_js_script(self) -> str:
+        data = self.read_certificate()
+        with open(self.settings.JS_REPLACE_CERTIFICATE_PATH, 'r') as file:
+            script = file.read()
+        for key, value in data.items():
+            script = script.replace(f"{key}_placeholder", value)
+        return script
+
     def log_in(self) -> None:
         # не надо открывать страницу, так как это сбрасывает ввод ЭЦП
         # self.open()
-        self.choose_certificate_button.click()
+
+        js_script = self.get_js_script()
+        self.driver.execute_script(js_script)
+
         self.enter_button.click()
