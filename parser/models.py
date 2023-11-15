@@ -39,6 +39,8 @@ class DownloadSettings(SingletonModel):
     # в секундах
     max_download_waiting = models.IntegerField("Максимальное время ожидания скачивания")
     download_check_period = models.IntegerField("Период проверки скачивания")
+    begin_date = models.DateField()
+    end_date = models.DateField()
 
 
 class LogInSettings(SingletonModel):

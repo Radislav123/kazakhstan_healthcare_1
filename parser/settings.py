@@ -30,3 +30,4 @@ class Settings(helper_settings.Settings):
         self.TEMP_DOWNLOAD_FOLDER = str(Path(f"{Path(__file__).resolve().parent.parent}/downloads_temp").resolve())
         self.CLEAR_TEMP_DOWNLOAD_FOLDER = True
         self.NOT_DOWNLOADED_EXTENSION = ".tmp"
+        self.DOWNLOAD_DATE_FORMAT = "%d.%m.%Y"

@@ -106,6 +106,7 @@ class Command(parser_command.ParserCommand):
                 try:
                     reports_page = ReportsPage(self.driver)
                     reports_page.open_report(report)
+                    reports_page.set_period()
                     reports_page.download_report()
                     self.wait_download()
                     self.move(report)

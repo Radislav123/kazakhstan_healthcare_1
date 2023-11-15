@@ -24,6 +24,15 @@ class ReportsPage(base_page.BasePage):
         )
         self.download_button = ExtendedWebElement(self, '//input[contains(@id, "Save")]')
 
+        self.begin_date_input = ExtendedWebElement(
+            self,
+            '//input[contains(@name, "calBeginDate") and not(@type = "hidden")]'
+        )
+        self.end_date_input = ExtendedWebElement(
+            self,
+            '//input[contains(@name, "calEndDate") and not(@type = "hidden")]'
+        )
+
     def open_report(self, report: models.Report) -> None:
         self.open()
         for i in range(1, 10):
@@ -33,6 +42,24 @@ class ReportsPage(base_page.BasePage):
                 step_element.click()
             else:
                 break
+
+    def set_period(self) -> None:
+        download_settings = models.DownloadSettings.get()
+        begin_date_string = download_settings.begin_date.strftime(self.settings.DOWNLOAD_DATE_FORMAT)
+        end_date_string = download_settings.end_date.strftime(self.settings.DOWNLOAD_DATE_FORMAT)
+        begin_on_change = "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_psCriteria_calBeginDate')"
+        end_on_change = "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_psCriteria_calEndDate')"
+
+        self.driver.execute_script(
+            f"arguments[0].setAttribute('value','{begin_date_string}');\n"
+            f"{begin_on_change};",
+            self.begin_date_input.selenium_element
+        )
+        self.driver.execute_script(
+            f"arguments[0].setAttribute('value','{end_date_string}');\n"
+            f"{end_on_change};",
+            self.end_date_input.selenium_element
+        )
 
     def download_report(self) -> None:
         self.form_button.click()
