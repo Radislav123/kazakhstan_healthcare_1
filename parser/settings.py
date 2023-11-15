@@ -12,7 +12,7 @@ class Settings(helper_settings.Settings):
         super().__init__()
         # Настройки Selenium
         # в секундах
-        self.SELENIUM_DEFAULT_TIMEOUT = 30
+        self.SELENIUM_DEFAULT_TIMEOUT = 60
 
         # Пути предопределенных настроек
         self.SETTINGS_FOLDER = f"{self.SECRETS_FOLDER}/settings"
@@ -29,3 +29,4 @@ class Settings(helper_settings.Settings):
 
         self.TEMP_DOWNLOAD_FOLDER = str(Path(f"{Path(__file__).resolve().parent.parent}/downloads_temp").resolve())
         self.CLEAR_TEMP_DOWNLOAD_FOLDER = True
+        self.NOT_DOWNLOADED_EXTENSION = ".tmp"

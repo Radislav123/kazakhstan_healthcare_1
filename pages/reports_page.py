@@ -24,15 +24,26 @@ class ReportsPage(base_page.BasePage):
         )
         self.download_button = ExtendedWebElement(self, '//input[contains(@id, "Save")]')
 
-    def open_report(self, report_path: models.Report) -> None:
+    def open_report(self, report: models.Report) -> None:
         self.open()
         for i in range(1, 10):
-            step_path = report_path.get_step_path(i)
+            step_path = report.get_step_path(i)
             if step_path:
                 step_element = ExtendedWebElement(self, f'//td[text() = "{step_path.strip()}"]')
                 step_element.click()
             else:
                 break
+
+    def download_report(self) -> None:
+        self.form_button.click()
+        try:
+            self.format_selector.click()
+        except TimeoutException:
+            self.form_button.reset()
+            self.form_button.click()
+            self.format_selector.click()
+        self.form_option.click()
+        self.download_button.click()
 
     def open(self) -> None:
         super().open()

@@ -5,7 +5,6 @@ import shutil
 import time
 from pathlib import Path
 
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -47,6 +46,7 @@ class Command(parser_command.ParserCommand):
         driver_options.add_argument("--disable-blink-features=AutomationControlled")
         if not parsing_settings.show_browser:
             driver_options.add_argument("--headless")
+            driver_options.add_argument("--disable-gpu")
         driver_options.add_argument("--window-size=1920,1080")
         driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         driver_options.add_experimental_option(
@@ -67,7 +67,7 @@ class Command(parser_command.ParserCommand):
         for timer in range(download_settings.max_download_waiting):
             time.sleep(download_settings.download_check_period)
             for file in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER):
-                if file.endswith(".tmp"):
+                if file.endswith(self.settings.NOT_DOWNLOADED_EXTENSION):
                     break
             else:
                 break
@@ -82,7 +82,16 @@ class Command(parser_command.ParserCommand):
         Path(folder).mkdir(parents = True, exist_ok = True)
         os.replace(last_file, f"{folder}/{report.name}.{last_file.split('.')[-1]}")
 
+    def remove_not_downloaded(self) -> None:
+        if os.path.exists(self.settings.TEMP_DOWNLOAD_FOLDER):
+            files = (file for file in (f"{self.settings.TEMP_DOWNLOAD_FOLDER}/{x}"
+                                       for x in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER)))
+            for file in files:
+                if file.endswith(self.settings.NOT_DOWNLOADED_EXTENSION):
+                    os.remove(file)
+
     def run(self) -> None:
+        self.remove_not_downloaded()
         log_in_page = LogInPage(self.driver)
         with open(self.settings.AUTH_COOKIES_PATH) as file:
             cookies = json.load(file)
@@ -92,19 +101,21 @@ class Command(parser_command.ParserCommand):
         reports_log_in_page.log_in()
 
         for report in models.Report.objects.filter(download = True):
-            reports_page = ReportsPage(self.driver)
-            reports_page.open_report(report)
-            reports_page.form_button.click()
-            try:
-                reports_page.format_selector.click()
-            except TimeoutException:
-                reports_page.form_button.reset()
-                reports_page.form_button.click()
-                reports_page.format_selector.click()
-            reports_page.form_option.click()
-            reports_page.download_button.click()
-            self.wait_download()
-            self.move(report)
+            counter = 3
+            while True:
+                try:
+                    reports_page = ReportsPage(self.driver)
+                    reports_page.open_report(report)
+                    reports_page.download_report()
+                    self.wait_download()
+                    self.move(report)
+                    break
+                except Exception as error:
+                    counter -= 1
+                    if counter <= 0:
+                        self.logger.error(error)
+                        self.remove_not_downloaded()
+                        break
 
         if self.settings.CLEAR_TEMP_DOWNLOAD_FOLDER:
             shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)

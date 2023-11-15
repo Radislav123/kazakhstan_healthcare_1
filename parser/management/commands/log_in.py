@@ -30,6 +30,7 @@ class Command(parser_command.ParserCommand):
 
     def after_command(self) -> None:
         if hasattr(self, "driver"):
+            self.driver.close()
             self.driver.quit()
 
     def prepare_driver(self) -> None:
@@ -41,6 +42,7 @@ class Command(parser_command.ParserCommand):
         driver_options.add_argument("--disable-blink-features=AutomationControlled")
         if not parsing_settings.show_browser:
             driver_options.add_argument("--headless")
+            driver_options.add_argument("--disable-gpu")
         driver_options.add_argument("--window-size=1920,1080")
         driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         driver_options.add_experimental_option(
