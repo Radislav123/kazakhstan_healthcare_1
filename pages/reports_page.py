@@ -2,6 +2,7 @@ import time
 
 from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import TimeoutException
+from selenium.webdriver.support.wait import WebDriverWait
 
 from pages import base_page
 from parser import models
@@ -15,8 +16,10 @@ class ReportsPage(base_page.BasePage):
         super().__init__(driver)
 
         self.form_button = ExtendedWebElement(self, '//div[@class = "dxb"]')
+        self.form_button.wait = WebDriverWait(self.driver, self.settings.SELENIUM_DEFAULT_TIMEOUT * 2)
 
         self.format_selector = ExtendedWebElement(self, '//select[contains(@name, "MainContent")]')
+        self.format_selector.wait = WebDriverWait(self.driver, self.settings.SELENIUM_DEFAULT_TIMEOUT * 4)
         translate = 'translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz")'
         self.form_option = ExtendedWebElement(
             self,
@@ -33,6 +36,17 @@ class ReportsPage(base_page.BasePage):
             '//input[contains(@name, "calEndDate") and not(@type = "hidden")]'
         )
 
+    def open(self) -> None:
+        super().open()
+        time.sleep(3)
+        checker = ExtendedWebElement(self, '//h1[contains(text(), "Ошибка сервера в приложении")]')
+        try:
+            checker.init()
+        except TimeoutException:
+            pass
+        else:
+            self.driver.back()
+
     def open_report(self, report: models.Report) -> None:
         self.open()
         for i in range(1, 10):
@@ -44,6 +58,10 @@ class ReportsPage(base_page.BasePage):
                 break
 
     def set_period(self) -> None:
+        # ожидание прогрузки страницы
+        self.form_button.init(self.form_button.WaitCondition.CLICKABLE)
+        self.form_button.reset()
+
         download_settings = models.DownloadSettings.get()
         begin_date_string = download_settings.begin_date.strftime(self.settings.DOWNLOAD_DATE_FORMAT)
         end_date_string = download_settings.end_date.strftime(self.settings.DOWNLOAD_DATE_FORMAT)
@@ -71,14 +89,3 @@ class ReportsPage(base_page.BasePage):
             self.format_selector.click()
         self.form_option.click()
         self.download_button.click()
-
-    def open(self) -> None:
-        super().open()
-        time.sleep(3)
-        checker = ExtendedWebElement(self, '//h1[contains(text(), "Ошибка сервера в приложении")]')
-        try:
-            checker.init()
-        except TimeoutException:
-            pass
-        else:
-            self.driver.back()

@@ -12,7 +12,7 @@ class Settings(helper_settings.Settings):
         super().__init__()
         # Настройки Selenium
         # в секундах
-        self.SELENIUM_DEFAULT_TIMEOUT = 60
+        self.SELENIUM_DEFAULT_TIMEOUT = 30
 
         # Пути предопределенных настроек
         self.SETTINGS_FOLDER = f"{self.SECRETS_FOLDER}/settings"
