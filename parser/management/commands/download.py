@@ -14,6 +14,16 @@ class DownloadNotFinishedException(Exception):
 
 
 class Command(parser_browser_command.ParserBrowserCommand):
+    def after_command(self, log_in_settings: models.LogInSettings) -> None:
+        super().after_command(log_in_settings)
+        log_in_settings.downloaded = True
+        log_in_settings.save()
+
+    def except_command(self, log_in_settings: models.LogInSettings) -> None:
+        super().except_command(log_in_settings)
+        log_in_settings.downloaded = False
+        log_in_settings.save()
+
     def wait_download(self) -> None:
         download_settings = models.DownloadSettings.get()
         for timer in range(download_settings.max_download_waiting):

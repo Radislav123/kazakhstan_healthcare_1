@@ -16,7 +16,6 @@ class ReportsPage(base_page.BasePage):
         super().__init__(driver)
 
         self.form_button = ExtendedWebElement(self, '//div[@class = "dxb"]')
-        self.form_button.wait = WebDriverWait(self.driver, self.settings.SELENIUM_DEFAULT_TIMEOUT * 2)
 
         self.format_selector = ExtendedWebElement(self, '//select[contains(@name, "MainContent")]')
         self.format_selector.wait = WebDriverWait(self.driver, self.settings.SELENIUM_DEFAULT_TIMEOUT * 4)

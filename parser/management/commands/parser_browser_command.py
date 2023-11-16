@@ -18,15 +18,25 @@ class ParserBrowserCommand(parser_command.ParserCommand):
         logins = models.LogInSettings.objects.all()
         for log_in_settings in logins:
             try:
-                self.before_command()
+                self.before_command(log_in_settings)
                 self.run(log_in_settings)
+                self.after_command(log_in_settings)
+            except Exception as error:
+                self.logger.error(error)
+                self.except_command(log_in_settings)
             finally:
-                self.after_command()
+                self.finally_command(log_in_settings)
 
-    def before_command(self) -> None:
+    def before_command(self, log_in_settings: models.LogInSettings) -> None:
         self.prepare_chrome_driver()
 
-    def after_command(self) -> None:
+    def after_command(self, log_in_settings: models.LogInSettings) -> None:
+        pass
+
+    def except_command(self, log_in_settings: models.LogInSettings) -> None:
+        pass
+
+    def finally_command(self, log_in_settings: models.LogInSettings) -> None:
         if hasattr(self, "driver"):
             self.driver.close()
             self.driver.quit()
