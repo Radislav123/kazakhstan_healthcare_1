@@ -18,7 +18,7 @@ class ReportsPage(base_page.BasePage):
         self.form_button = ExtendedWebElement(self, '//div[@class = "dxb"]')
 
         self.format_selector = ExtendedWebElement(self, '//select[contains(@name, "MainContent")]')
-        self.format_selector.wait = WebDriverWait(self.driver, self.settings.SELENIUM_DEFAULT_TIMEOUT * 4)
+        self.format_selector.wait = WebDriverWait(self.driver, self.settings.SELENIUM_DEFAULT_TIMEOUT * 20)
         translate = 'translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz")'
         self.form_option = ExtendedWebElement(
             self,

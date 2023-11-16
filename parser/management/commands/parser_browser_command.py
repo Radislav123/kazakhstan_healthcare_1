@@ -15,7 +15,7 @@ class ParserBrowserCommand(parser_command.ParserCommand):
     driver: Chrome
 
     def handle(self, *args, **options) -> None:
-        logins = models.LogInSettings.objects.all()
+        logins = models.LogInSettings.objects.filter(download = True)
         for log_in_settings in logins:
             try:
                 self.before_command(log_in_settings)

@@ -84,7 +84,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
                     if counter <= 0:
                         self.logger.error(error)
                         self.remove_not_downloaded()
-                        break
+                        raise error
 
         if self.settings.CLEAR_TEMP_DOWNLOAD_FOLDER:
             shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)

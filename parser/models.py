@@ -47,6 +47,7 @@ class LogInSettings(BaseModel):
     class Meta:
         verbose_name_plural = "log in settings"
 
+    download = models.BooleanField("Скачивать")
     folder = models.CharField("Папка для скачивания", max_length = 1000, null = True)
     iin = models.IntegerField("ИИН")
     password = models.CharField("Пароль", max_length = 100)
