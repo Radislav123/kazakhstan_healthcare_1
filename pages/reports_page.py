@@ -1,8 +1,7 @@
 import time
 
 from parsing_helper.web_elements import ExtendedWebElement
-from selenium.common import TimeoutException
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common import ElementClickInterceptedException, TimeoutException
 
 from pages import base_page
 from parser import models
@@ -18,7 +17,6 @@ class ReportsPage(base_page.BasePage):
         self.form_button = ExtendedWebElement(self, '//div[@class = "dxb"]')
 
         self.format_selector = ExtendedWebElement(self, '//select[contains(@name, "MainContent")]')
-        self.format_selector.wait = WebDriverWait(self.driver, self.settings.SELENIUM_DEFAULT_TIMEOUT * 20)
         translate = 'translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz")'
         self.form_option = ExtendedWebElement(
             self,
@@ -48,6 +46,14 @@ class ReportsPage(base_page.BasePage):
 
     def open_report(self, report: models.Report) -> None:
         self.open()
+        # проверка того, что страница перезагрузилась
+        try:
+            self.form_button.init()
+            self.form_button.reset()
+            self.open()
+        except TimeoutException:
+            pass
+
         for i in range(1, 10):
             step_path = report.get_step_path(i)
             if step_path:
@@ -79,12 +85,24 @@ class ReportsPage(base_page.BasePage):
         )
 
     def download_report(self) -> None:
-        self.form_button.click()
         try:
-            self.format_selector.click()
+            self.form_button.click()
         except TimeoutException:
+            time.sleep(1)
             self.form_button.reset()
             self.form_button.click()
-            self.format_selector.click()
+
+        counter = 20 * 60 // self.settings.SELENIUM_DEFAULT_TIMEOUT
+        while True:
+            try:
+                self.format_selector.click()
+                break
+            except (TimeoutException, ElementClickInterceptedException) as error:
+                counter -= 1
+                self.form_button.reset()
+                self.format_selector.reset()
+                if counter <= 0:
+                    raise error
+
         self.form_option.click()
         self.download_button.click()

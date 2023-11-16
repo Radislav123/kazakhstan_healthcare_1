@@ -11,10 +11,15 @@ from parser import models
 from parser.management.commands import parser_command
 
 
+class DownloadException(Exception):
+    pass
+
+
 class ParserBrowserCommand(parser_command.ParserCommand):
     driver: Chrome
 
     def handle(self, *args, **options) -> None:
+        errors = []
         logins = models.LogInSettings.objects.filter(download = True)
         for log_in_settings in logins:
             try:
@@ -22,10 +27,13 @@ class ParserBrowserCommand(parser_command.ParserCommand):
                 self.run(log_in_settings)
                 self.after_command(log_in_settings)
             except Exception as error:
-                self.logger.error(error)
                 self.except_command(log_in_settings)
+                errors.append(error)
             finally:
                 self.finally_command(log_in_settings)
+
+        if errors:
+            raise DownloadException from errors[0]
 
     def before_command(self, log_in_settings: models.LogInSettings) -> None:
         self.prepare_chrome_driver()

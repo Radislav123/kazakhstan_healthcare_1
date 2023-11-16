@@ -55,6 +55,7 @@ class LogInSettings(BaseModel):
     digital_signature_password = models.CharField("Пароль ЭЦП", max_length = 100)
     logged_in = models.BooleanField("Последняя авторизация", null = True)
     downloaded = models.BooleanField("Последнее скачивание", null = True)
+    download_duration = models.DurationField("Время скачивания всех отчетов", null = True)
 
 
 class ParsingSettings(SingletonModel):

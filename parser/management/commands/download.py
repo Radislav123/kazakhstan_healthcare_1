@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import shutil
@@ -29,7 +30,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
         for timer in range(download_settings.max_download_waiting):
             time.sleep(download_settings.download_check_period)
             for file in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER):
-                if file.endswith(self.settings.NOT_DOWNLOADED_EXTENSION):
+                if file.split('.')[-1] in self.settings.NOT_DOWNLOADED_EXTENSIONS:
                     break
             else:
                 break
@@ -55,10 +56,11 @@ class Command(parser_browser_command.ParserBrowserCommand):
             files = (file for file in (f"{self.settings.TEMP_DOWNLOAD_FOLDER}/{x}"
                                        for x in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER)))
             for file in files:
-                if file.endswith(self.settings.NOT_DOWNLOADED_EXTENSION):
+                if file.split('.')[-1] in self.settings.NOT_DOWNLOADED_EXTENSIONS:
                     os.remove(file)
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
+        form_begin = datetime.datetime.now()
         self.remove_not_downloaded()
         log_in_page = LogInPage(self.driver)
         with open(self.get_cookies_path(log_in_settings)) as file:
@@ -82,9 +84,12 @@ class Command(parser_browser_command.ParserBrowserCommand):
                 except Exception as error:
                     counter -= 1
                     if counter <= 0:
-                        self.logger.error(error)
                         self.remove_not_downloaded()
                         raise error
 
         if self.settings.CLEAR_TEMP_DOWNLOAD_FOLDER:
             shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)
+
+        form_end = datetime.datetime.now()
+        log_in_settings.download_duration = form_end - form_begin
+        log_in_settings.save()

@@ -21,6 +21,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
     def before_command(self, log_in_settings: models.LogInSettings) -> None:
         log_in_settings.logged_in = None
         log_in_settings.downloaded = None
+        log_in_settings.download_duration = None
         log_in_settings.save()
         super().before_command(log_in_settings)
 
