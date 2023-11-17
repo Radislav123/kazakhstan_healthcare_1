@@ -46,13 +46,6 @@ class ReportsPage(base_page.BasePage):
 
     def open_report(self, report: models.Report) -> None:
         self.open()
-        # проверка того, что страница перезагрузилась
-        try:
-            self.form_button.init()
-            self.form_button.reset()
-            self.open()
-        except TimeoutException:
-            pass
 
         for i in range(1, 10):
             step_path = report.get_step_path(i)
