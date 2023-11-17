@@ -13,4 +13,6 @@ class ReportsBasePage(base_page.BasePage):
     def __init__(self, driver) -> None:
         super().__init__(driver)
 
-        self.loader = ExtendedWebElement(self, '//div[@aria-hidden = "true"]')
+        self.loader_hidden = ExtendedWebElement(self, '//div[@aria-hidden = "true"]')
+        self.loader_visible = ExtendedWebElement(self, '//div[@aria-hidden = "false"]')
+        self.title = ExtendedWebElement(self, '//h1')

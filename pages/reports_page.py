@@ -1,13 +1,17 @@
 import time
 
 from parsing_helper.web_elements import ExtendedWebElement
-from selenium.common import ElementClickInterceptedException, TimeoutException
+from selenium.common import TimeoutException
 
 from pages import reports_base_page
 from parser import models
 
 
 class FormButtonNotClickedException(Exception):
+    pass
+
+
+class PageNotReopened(Exception):
     pass
 
 
@@ -48,6 +52,18 @@ class ReportsPage(reports_base_page.ReportsBasePage):
         else:
             self.driver.back()
 
+        counter = 5
+        while True:
+            try:
+                self.form_button.init()
+                self.form_button.reset()
+                counter -= 1
+                if counter <= 0:
+                    raise PageNotReopened()
+                time.sleep(self.settings.SELENIUM_DEFAULT_TIMEOUT)
+            except TimeoutException:
+                break
+
     def open_report(self, report: models.Report) -> None:
         self.open()
 
@@ -82,30 +98,29 @@ class ReportsPage(reports_base_page.ReportsBasePage):
         )
 
     def download_report(self) -> None:
-        counter = 10
+        counter = 5
         while True:
-            self.form_button.click()
             try:
-                self.loader.init(self.loader.WaitCondition.VISIBLE)
+                self.form_button.click()
+                self.form_button.reset()
+                self.loader_visible.init()
+                self.loader_visible.reset()
                 break
             except TimeoutException as exception:
                 counter -= 1
-                self.form_button.reset()
-                self.loader.reset()
                 if counter <= 0:
                     raise exception
 
         counter = 20 * 60 // self.settings.SELENIUM_DEFAULT_TIMEOUT
         while True:
             try:
-                self.loader.reset()
-                self.loader.init(self.loader.WaitCondition.VISIBLE)
-                time.sleep(self.settings.SELENIUM_DEFAULT_TIMEOUT)
+                self.loader_hidden.reset()
+                self.loader_hidden.init()
                 break
-            except (TimeoutException, ElementClickInterceptedException) as error:
+            except TimeoutException as exception:
                 counter -= 1
                 if counter <= 0:
-                    raise error
+                    raise exception
 
         self.format_selector.click()
         self.form_option.click()

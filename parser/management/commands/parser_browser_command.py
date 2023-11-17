@@ -1,13 +1,12 @@
 import pathlib
 
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 from webdriver_manager.firefox import GeckoDriverManager
-from selenium.common.exceptions import WebDriverException
-
 
 from parser import models
 from parser.management.commands import parser_command
@@ -35,14 +34,14 @@ class ParserBrowserCommand(parser_command.ParserCommand):
                 self.finally_command(log_in_settings)
 
         if errors:
-            # raise DownloadException from errors[0]
-            self.logger.error("========================================")
+            self.logger.exception("========================================")
             for error in errors:
-                self.logger.error("----------------------------------------")
-                self.logger.error(type(error))
-                self.logger.error(error)
-                self.logger.error("----------------------------------------")
-            self.logger.error("========================================")
+                self.logger.exception("----------------------------------------")
+                self.logger.exception(type(error))
+                self.logger.exception(error)
+                self.logger.exception("----------------------------------------")
+            self.logger.exception("========================================")
+            raise DownloadException from errors[0]
 
     def before_command(self, log_in_settings: models.LogInSettings) -> None:
         self.prepare_chrome_driver()
