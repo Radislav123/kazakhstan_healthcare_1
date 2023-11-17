@@ -3,12 +3,16 @@ import time
 from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import ElementClickInterceptedException, TimeoutException
 
-from pages import base_page
+from pages import reports_base_page
 from parser import models
 
 
+class FormButtonNotClickedException(Exception):
+    pass
+
+
 # https://www.eisz.kz/default.aspx
-class ReportsPage(base_page.BasePage):
+class ReportsPage(reports_base_page.ReportsBasePage):
     path = "default.aspx"
 
     def __init__(self, driver) -> None:
@@ -78,24 +82,31 @@ class ReportsPage(base_page.BasePage):
         )
 
     def download_report(self) -> None:
-        try:
+        counter = 10
+        while True:
             self.form_button.click()
-        except TimeoutException:
-            time.sleep(1)
-            self.form_button.reset()
-            self.form_button.click()
+            try:
+                self.loader.init(self.loader.WaitCondition.VISIBLE)
+                break
+            except TimeoutException as exception:
+                counter -= 1
+                self.form_button.reset()
+                self.loader.reset()
+                if counter <= 0:
+                    raise exception
 
         counter = 20 * 60 // self.settings.SELENIUM_DEFAULT_TIMEOUT
         while True:
             try:
-                self.format_selector.click()
+                self.loader.reset()
+                self.loader.init(self.loader.WaitCondition.VISIBLE)
+                time.sleep(self.settings.SELENIUM_DEFAULT_TIMEOUT)
                 break
             except (TimeoutException, ElementClickInterceptedException) as error:
                 counter -= 1
-                self.form_button.reset()
-                self.format_selector.reset()
                 if counter <= 0:
                     raise error
 
+        self.format_selector.click()
         self.form_option.click()
         self.download_button.click()

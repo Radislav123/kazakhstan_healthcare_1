@@ -13,7 +13,7 @@ class DownloadSettingsAdmin(BaseAdmin):
 
 class LogInSettingsAdmin(BaseAdmin):
     model = models.LogInSettings
-    not_required_fields = {"folder", }
+    not_required_fields = {"folder", "download_duration"}
 
 
 class ParsingSettingsAdmin(BaseAdmin):
