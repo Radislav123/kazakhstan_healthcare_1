@@ -6,6 +6,8 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 from webdriver_manager.firefox import GeckoDriverManager
+from selenium.common.exceptions import WebDriverException
+
 
 from parser import models
 from parser.management.commands import parser_command
@@ -46,8 +48,12 @@ class ParserBrowserCommand(parser_command.ParserCommand):
 
     def finally_command(self, log_in_settings: models.LogInSettings) -> None:
         if hasattr(self, "driver"):
-            self.driver.close()
-            self.driver.quit()
+            try:
+                self.driver.close()
+                self.driver.quit()
+            except WebDriverException as exception:
+                if "disconnected" in exception.msg:
+                    pass
 
     def prepare_chrome_driver(self) -> None:
         parsing_settings = models.ParsingSettings.get()
