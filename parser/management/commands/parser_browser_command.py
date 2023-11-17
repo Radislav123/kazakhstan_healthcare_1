@@ -35,7 +35,14 @@ class ParserBrowserCommand(parser_command.ParserCommand):
                 self.finally_command(log_in_settings)
 
         if errors:
-            raise DownloadException from errors[0]
+            # raise DownloadException from errors[0]
+            self.logger.error("========================================")
+            for error in errors:
+                self.logger.error("----------------------------------------")
+                self.logger.error(type(error))
+                self.logger.error(error)
+                self.logger.error("----------------------------------------")
+            self.logger.error("========================================")
 
     def before_command(self, log_in_settings: models.LogInSettings) -> None:
         self.prepare_chrome_driver()
