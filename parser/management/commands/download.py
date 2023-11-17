@@ -87,7 +87,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
                         self.remove_not_downloaded()
                         raise error
 
-        if self.settings.CLEAR_TEMP_DOWNLOAD_FOLDER:
+        if os.path.exists(self.settings.TEMP_DOWNLOAD_FOLDER):
             shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)
 
         form_end = datetime.datetime.now()
