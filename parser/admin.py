@@ -23,6 +23,8 @@ class ParsingSettingsAdmin(BaseAdmin):
 class ReportAdmin(BaseAdmin):
     model = models.Report
     not_required_fields = set(f"step_{x}" for x in range(1, 8))
+    not_required_fields.update(f"filter_title_{x}" for x in range(1, 11))
+    not_required_fields.update(f"filter_value_{x}" for x in range(1, 11))
     not_required_fields.add("folder")
 
 
