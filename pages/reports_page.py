@@ -41,8 +41,7 @@ class ReportsPage(reports_base_page.ReportsBasePage):
             '//input[contains(@name, "calEndDate") and not(@type = "hidden")]'
         )
 
-    def open(self) -> None:
-        super().open()
+    def check_open_error(self) -> None:
         time.sleep(3)
         checker = ExtendedWebElement(self, '//h1[contains(text(), "Ошибка сервера в приложении")]')
         try:
@@ -52,8 +51,11 @@ class ReportsPage(reports_base_page.ReportsBasePage):
         else:
             self.driver.back()
 
+    def open(self) -> None:
         counter = 5
         while True:
+            super().open()
+            self.check_open_error()
             try:
                 self.form_button.init()
                 self.form_button.reset()
