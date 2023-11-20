@@ -144,11 +144,10 @@ class ReportsPage(reports_base_page.ReportsBasePage):
         while True:
             try:
                 self.form_button.click()
-                self.form_button.reset()
                 self.loader_visible.init()
-                self.loader_visible.reset()
                 break
             except TimeoutException as exception:
+                self.form_button.reset()
                 counter -= 1
                 if counter <= 0:
                     raise exception

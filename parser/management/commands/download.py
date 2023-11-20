@@ -79,13 +79,12 @@ class Command(parser_browser_command.ParserBrowserCommand):
             cookies = json.load(file)
             log_in_page.set_cookies(cookies)
 
-        reports_log_in_page = ReportsLogInPage(self.driver)
-        reports_log_in_page.log_in()
-
         for report in models.Report.objects.filter(download = True):
             counter = 3
             while True:
                 try:
+                    reports_log_in_page = ReportsLogInPage(self.driver)
+                    reports_log_in_page.log_in()
                     reports_page = ReportsPage(self.driver)
                     reports_page.open_report(report)
                     reports_page.set_period()
