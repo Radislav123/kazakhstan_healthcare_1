@@ -15,6 +15,13 @@ class DownloadNotFinishedException(Exception):
 
 
 class Command(parser_browser_command.ParserBrowserCommand):
+    begin_time: datetime.datetime
+    end_time: datetime.datetime
+
+    def before_command(self, log_in_settings: models.LogInSettings) -> None:
+        super().before_command(log_in_settings)
+        self.begin_time = datetime.datetime.now()
+
     def after_command(self, log_in_settings: models.LogInSettings) -> None:
         super().after_command(log_in_settings)
         log_in_settings.downloaded = True
@@ -23,6 +30,11 @@ class Command(parser_browser_command.ParserBrowserCommand):
     def except_command(self, log_in_settings: models.LogInSettings) -> None:
         super().except_command(log_in_settings)
         log_in_settings.downloaded = False
+        log_in_settings.save()
+
+    def finally_command(self, log_in_settings: models.LogInSettings) -> None:
+        self.end_time = datetime.datetime.now()
+        log_in_settings.download_duration = self.end_time - self.begin_time
         log_in_settings.save()
 
     def wait_download(self) -> None:
@@ -60,7 +72,6 @@ class Command(parser_browser_command.ParserBrowserCommand):
                     os.remove(file)
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
-        form_begin = datetime.datetime.now()
         self.remove_not_downloaded()
         log_in_page = LogInPage(self.driver)
         with open(self.get_cookies_path(log_in_settings)) as file:
@@ -77,6 +88,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
                     reports_page = ReportsPage(self.driver)
                     reports_page.open_report(report)
                     reports_page.set_period()
+                    reports_page.set_filters()
                     reports_page.download_report()
                     self.wait_download()
                     self.move(log_in_settings, report)
@@ -89,7 +101,3 @@ class Command(parser_browser_command.ParserBrowserCommand):
 
         if os.path.exists(self.settings.TEMP_DOWNLOAD_FOLDER):
             shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)
-
-        form_end = datetime.datetime.now()
-        log_in_settings.download_duration = form_end - form_begin
-        log_in_settings.save()

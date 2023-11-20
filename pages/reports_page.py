@@ -99,6 +99,9 @@ class ReportsPage(reports_base_page.ReportsBasePage):
             self.end_date_input.selenium_element
         )
 
+    def set_filters(self) -> None:
+        pass
+
     def download_report(self) -> None:
         counter = 5
         while True:
