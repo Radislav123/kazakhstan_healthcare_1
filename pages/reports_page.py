@@ -18,6 +18,9 @@ class PageNotReopened(Exception):
 # https://www.eisz.kz/default.aspx
 class ReportsPage(reports_base_page.ReportsBasePage):
     path = "default.aspx"
+    translate = 'translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'
+    translate_value = 'translate(@value, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'
+    translate_text = 'translate(text(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'
 
     def __init__(self, driver) -> None:
         super().__init__(driver)
@@ -25,10 +28,9 @@ class ReportsPage(reports_base_page.ReportsBasePage):
         self.form_button = ExtendedWebElement(self, '//div[@class = "dxb"]')
 
         self.format_selector = ExtendedWebElement(self, '//select[contains(@name, "MainContent")]')
-        translate = 'translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz")'
-        self.form_option = ExtendedWebElement(
+        self.format_option = ExtendedWebElement(
             self,
-            f'//option[contains({translate}, "{models.DownloadSettings.get().format.lower()}")]'
+            f'//option[contains({self.translate}, "{models.DownloadSettings.get().format.lower()}")]'
         )
         self.download_button = ExtendedWebElement(self, '//input[contains(@id, "Save")]')
 
@@ -69,7 +71,7 @@ class ReportsPage(reports_base_page.ReportsBasePage):
     def open_report(self, report: models.Report) -> None:
         self.open()
 
-        for i in range(1, 10):
+        for i in range(1, 8):
             step_path = report.get_step_path(i)
             if step_path:
                 step_element = ExtendedWebElement(self, f'//td[text() = "{step_path.strip()}"]')
@@ -99,8 +101,43 @@ class ReportsPage(reports_base_page.ReportsBasePage):
             self.end_date_input.selenium_element
         )
 
-    def set_filters(self) -> None:
-        pass
+    def set_filters(self, report: models.Report) -> None:
+        for i in range(1, 11):
+            filter_title = report.get_filter_title(i)
+            filter_value = report.get_filter_value(i)
+            if filter_title and filter_value:
+                filter_element = ExtendedWebElement(
+                    self,
+                    # filter_title.lower().strip() - не работает
+                    f'//span[contains({self.translate}, "{filter_title.strip()}")]/../..'
+                )
+                open_options_button = ExtendedWebElement(
+                    self,
+                    f'{filter_element.xpath}//td[contains(@class, "Button")]'
+                )
+                option = ExtendedWebElement(
+                    self,
+                    # filter_title.value().strip() - не работает
+                    f'{filter_element.xpath}//td[contains({self.translate_text}, "{filter_value.strip()}")]'
+                )
+
+                open_options_button.click()
+                checker = ExtendedWebElement(
+                    self,
+                    f'{filter_element.xpath}//input[contains({self.translate_value}, "{filter_value.strip()}")]'
+                )
+                counter = 5
+                while True:
+                    try:
+                        time.sleep(1)
+                        option.click()
+                        checker.init()
+                        break
+                    except TimeoutException as exception:
+                        option.reset()
+                        counter -= 1
+                        if counter <= 0:
+                            raise exception
 
     def download_report(self) -> None:
         counter = 5
@@ -128,5 +165,5 @@ class ReportsPage(reports_base_page.ReportsBasePage):
                     raise exception
 
         self.format_selector.click()
-        self.form_option.click()
+        self.format_option.click()
         self.download_button.click()

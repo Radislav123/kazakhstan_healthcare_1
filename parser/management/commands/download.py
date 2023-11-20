@@ -36,6 +36,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
         self.end_time = datetime.datetime.now()
         log_in_settings.download_duration = self.end_time - self.begin_time
         log_in_settings.save()
+        super().finally_command(log_in_settings)
 
     def wait_download(self) -> None:
         download_settings = models.DownloadSettings.get()
@@ -88,7 +89,7 @@ class Command(parser_browser_command.ParserBrowserCommand):
                     reports_page = ReportsPage(self.driver)
                     reports_page.open_report(report)
                     reports_page.set_period()
-                    reports_page.set_filters()
+                    reports_page.set_filters(report)
                     reports_page.download_report()
                     self.wait_download()
                     self.move(log_in_settings, report)

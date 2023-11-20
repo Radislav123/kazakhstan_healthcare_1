@@ -101,3 +101,9 @@ class Report(BaseModel):
 
     def get_step_path(self, step: int) -> str | None:
         return getattr(self, f"step_{step}")
+
+    def get_filter_title(self, index: int) -> str | None:
+        return getattr(self, f"filter_title_{index}")
+
+    def get_filter_value(self, index: int) -> str | None:
+        return getattr(self, f"filter_value_{index}")
