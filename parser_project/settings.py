@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "core",
-    "eisz_downloader",
+    "eisz",
 ]
 
 MIDDLEWARE = [

@@ -7,7 +7,7 @@
     ```
 3) подготовить БД:
     ```shell
-    python manage.py makemigrations eisz_downloader
+    python manage.py makemigrations core, eisz, damumed
     python manage.py migrate
     python manage.py prepare_db
     ```

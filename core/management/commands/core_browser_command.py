@@ -7,21 +7,24 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 from webdriver_manager.firefox import GeckoDriverManager
+from typing import Type
 
-from eisz_downloader import models
-from eisz_downloader.management.commands import eisz_downloader_command
+from core import models
+from core.management.commands import core_command
 
 
 class DownloadException(Exception):
     pass
 
 
-class EISZDownloaderBrowserCommand(eisz_downloader_command.EISZDownloaderCommand):
+class CoreBrowserCommand(core_command.CoreCommand):
+    log_in_settings_model: Type[models.LogInSettingsModel]
+    parsing_settings_model: Type[models.ParsingSettingsModel]
     driver: Chrome
 
     def handle(self, *args, **options) -> None:
         errors = []
-        logins = models.LogInSettings.objects.filter(download = True)
+        logins = self.log_in_settings_model.objects.filter(download = True)
         for log_in_settings in logins:
             try:
                 self.before_command(log_in_settings)
@@ -43,16 +46,16 @@ class EISZDownloaderBrowserCommand(eisz_downloader_command.EISZDownloaderCommand
             self.logger.exception("========================================")
             raise DownloadException from errors[0]
 
-    def before_command(self, log_in_settings: models.LogInSettings) -> None:
+    def before_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         self.prepare_chrome_driver()
 
-    def after_command(self, log_in_settings: models.LogInSettings) -> None:
+    def after_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         pass
 
-    def except_command(self, log_in_settings: models.LogInSettings) -> None:
+    def except_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         pass
 
-    def finally_command(self, log_in_settings: models.LogInSettings) -> None:
+    def finally_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         if hasattr(self, "driver"):
             try:
                 self.driver.close()
@@ -62,7 +65,7 @@ class EISZDownloaderBrowserCommand(eisz_downloader_command.EISZDownloaderCommand
                     pass
 
     def prepare_chrome_driver(self) -> None:
-        parsing_settings = models.ParsingSettings.get()
+        parsing_settings = self.parsing_settings_model.get()
 
         driver_options = ChromeOptions()
         # этот параметр тоже нужен, так как в режиме headless с некоторыми элементами нельзя взаимодействовать
@@ -87,7 +90,7 @@ class EISZDownloaderBrowserCommand(eisz_downloader_command.EISZDownloaderCommand
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
 
     def prepare_firefox_driver(self) -> None:
-        parsing_settings = models.ParsingSettings.get()
+        parsing_settings = self.parsing_settings_model.get()
 
         driver_options = FirefoxOptions()
         if not parsing_settings.show_browser:
@@ -110,8 +113,8 @@ class EISZDownloaderBrowserCommand(eisz_downloader_command.EISZDownloaderCommand
         )
         self.driver.maximize_window()
 
-    def run(self, log_in_settings: models.LogInSettings) -> None:
+    def run(self, log_in_settings: models.LogInSettingsModel) -> None:
         raise NotImplementedError()
 
-    def get_cookies_path(self, log_in_settings: models.LogInSettings) -> str:
-        return self.settings.AUTH_COOKIES_PATH.replace("placeholder", f"eisz_downloader_{log_in_settings.id}")
+    def get_cookies_path(self, log_in_settings: models.LogInSettingsModel) -> str:
+        raise NotImplementedError()

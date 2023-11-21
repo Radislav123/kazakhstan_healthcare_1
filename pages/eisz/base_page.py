@@ -1,6 +1,6 @@
 from parsing_helper.pages import base_page
 
-from eisz_downloader.settings import Settings
+from eisz.settings import Settings
 
 
 # https://www.eisz.kz/

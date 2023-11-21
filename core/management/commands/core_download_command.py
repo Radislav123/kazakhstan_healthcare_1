@@ -1,46 +1,45 @@
 import datetime
-import json
 import os
-import shutil
 import time
 from pathlib import Path
+from typing import Type
 
-from eisz_downloader import models
-from eisz_downloader.management.commands import eisz_downloader_browser_command
-from pages.eisz import LogInPage
-from pages.eisz.reports import ReportsLogInPage, ReportsPage
+from core import models
+from core.management.commands import core_browser_command
 
 
 class DownloadNotFinishedException(Exception):
     pass
 
 
-class Command(eisz_downloader_browser_command.EISZDownloaderBrowserCommand):
+class CoreDownloadCommand(core_browser_command.CoreBrowserCommand):
+    download_settings_model: Type[models.DownloadSettingsModel]
+    report_model: Type[models.ReportModel]
     begin_time: datetime.datetime
     end_time: datetime.datetime
 
-    def before_command(self, log_in_settings: models.LogInSettings) -> None:
+    def before_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         super().before_command(log_in_settings)
         self.begin_time = datetime.datetime.now()
 
-    def after_command(self, log_in_settings: models.LogInSettings) -> None:
+    def after_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         super().after_command(log_in_settings)
         log_in_settings.downloaded = True
         log_in_settings.save()
 
-    def except_command(self, log_in_settings: models.LogInSettings) -> None:
+    def except_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         super().except_command(log_in_settings)
         log_in_settings.downloaded = False
         log_in_settings.save()
 
-    def finally_command(self, log_in_settings: models.LogInSettings) -> None:
+    def finally_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         self.end_time = datetime.datetime.now()
         log_in_settings.download_duration = self.end_time - self.begin_time
         log_in_settings.save()
         super().finally_command(log_in_settings)
 
     def wait_download(self) -> None:
-        download_settings = models.DownloadSettings.get()
+        download_settings = self.download_settings_model.get()
         for timer in range(download_settings.max_download_waiting):
             time.sleep(download_settings.download_check_period)
             for file in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER):
@@ -51,12 +50,12 @@ class Command(eisz_downloader_browser_command.EISZDownloaderBrowserCommand):
         else:
             raise DownloadNotFinishedException()
 
-    def move(self, log_in_settings: models.LogInSettings, report: models.Report) -> None:
+    def move(self, log_in_settings: models.LogInSettingsModel, report: models.ReportModel) -> None:
         files = {os.path.getctime(file): file for file in
                  (f"{self.settings.TEMP_DOWNLOAD_FOLDER}/{x}" for x in os.listdir(self.settings.TEMP_DOWNLOAD_FOLDER))}
         last_file: str = files[max(files)]
 
-        folder = models.DownloadSettings.get().folder
+        folder = self.download_settings_model.get().folder
         if log_in_settings.folder:
             folder += f"/{log_in_settings.folder}"
         if report.folder:
@@ -73,32 +72,5 @@ class Command(eisz_downloader_browser_command.EISZDownloaderBrowserCommand):
                 if file.split('.')[-1] in self.settings.NOT_DOWNLOADED_EXTENSIONS:
                     os.remove(file)
 
-    def run(self, log_in_settings: models.LogInSettings) -> None:
-        self.remove_not_downloaded()
-        log_in_page = LogInPage(self.driver)
-        with open(self.get_cookies_path(log_in_settings)) as file:
-            cookies = json.load(file)
-            log_in_page.set_cookies(cookies)
-
-        for report in models.Report.objects.filter(download = True):
-            counter = 3
-            while True:
-                try:
-                    reports_log_in_page = ReportsLogInPage(self.driver)
-                    reports_log_in_page.log_in()
-                    reports_page = ReportsPage(self.driver)
-                    reports_page.open_report(report)
-                    reports_page.set_period()
-                    reports_page.set_filters(report)
-                    reports_page.download_report()
-                    self.wait_download()
-                    self.move(log_in_settings, report)
-                    break
-                except Exception as error:
-                    counter -= 1
-                    if counter <= 0:
-                        self.remove_not_downloaded()
-                        raise error
-
-        if os.path.exists(self.settings.TEMP_DOWNLOAD_FOLDER):
-            shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)
+    def run(self, log_in_settings: models.LogInSettingsModel) -> None:
+        raise NotImplementedError()

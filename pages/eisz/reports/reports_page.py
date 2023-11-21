@@ -4,7 +4,7 @@ from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import TimeoutException
 
 from pages.eisz.reports import reports_base_page
-from parser import models
+from eisz import models
 
 
 class FormButtonNotClickedException(Exception):

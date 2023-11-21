@@ -4,8 +4,8 @@ import cryptography.x509.name
 from cryptography.hazmat.primitives.serialization import Encoding, pkcs12
 from parsing_helper.web_elements import ExtendedWebElement
 
+from eisz import models
 from pages.eisz import base_page
-from eisz_downloader import models
 
 
 # https://www.eisz.kz/edslogin
