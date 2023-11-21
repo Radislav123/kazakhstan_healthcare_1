@@ -114,4 +114,4 @@ class EISZDownloaderBrowserCommand(eisz_downloader_command.EISZDownloaderCommand
         raise NotImplementedError()
 
     def get_cookies_path(self, log_in_settings: models.LogInSettings) -> str:
-        return self.settings.AUTH_COOKIES_PATH.replace("placeholder", str(log_in_settings.id))
+        return self.settings.AUTH_COOKIES_PATH.replace("placeholder", f"eisz_downloader_{log_in_settings.id}")

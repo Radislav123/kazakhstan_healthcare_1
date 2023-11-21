@@ -1,34 +1,21 @@
-from pathlib import Path
-
-from parsing_helper import settings as helper_settings
-
+from core import settings
 from eisz_downloader.apps import EISZDownloaderConfig
 
 
-class Settings(helper_settings.Settings):
+class Settings(settings.Settings):
     APP_NAME = EISZDownloaderConfig.name
 
     def __init__(self):
         super().__init__()
-        # Настройки Selenium
-        # в секундах
-        self.SELENIUM_DEFAULT_TIMEOUT = 10
 
         # Пути предопределенных настроек
-        self.SETTINGS_FOLDER = f"{self.SECRETS_FOLDER}/settings"
+        self.SETTINGS_FOLDER = f"{self.SETTINGS_FOLDER}/eisz_downloader"
         self.DOWNLOAD_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/download.json"
         self.LOG_IN_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/log_in.json"
         self.PARSING_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/parsing.json"
-        self.REPORT_PATHS_PATH = f"{self.SETTINGS_FOLDER}/report_paths.json"
-
-        self.LOG_IN_FOLDER = f"{self.SECRETS_FOLDER}/log_in"
-        self.AUTH_COOKIES_PATH = f"{self.LOG_IN_FOLDER}/cookies_placeholder.json"
+        self.REPORTS_PATH = f"{self.SETTINGS_FOLDER}/reports.json"
 
         self.JS_CODE_FOLDER = "js"
         self.JS_REPLACE_CERTIFICATE_PATH = f"{self.JS_CODE_FOLDER}/replaceCertificate.js"
 
-        self.TEMP_DOWNLOAD_FOLDER = str(Path(f"{Path(__file__).resolve().parent.parent}/downloads_temp").resolve())
-        self.CLEAR_TEMP_DOWNLOAD_FOLDER = True
-        # noinspection SpellCheckingInspection
-        self.NOT_DOWNLOADED_EXTENSIONS = ("tmp", "crdownload")
         self.DOWNLOAD_DATE_FORMAT = "%d.%m.%Y"

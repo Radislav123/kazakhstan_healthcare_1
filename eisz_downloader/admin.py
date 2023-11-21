@@ -1,26 +1,27 @@
 from parsing_helper import admin as helper_admin
 
+from core import admin as core_admin
 from eisz_downloader import models
 
 
-class BaseAdmin(helper_admin.BaseAdmin):
-    model = models.BaseModel
+class EISZDownloaderAdmin(core_admin.CoreAdmin):
+    model = models.EISZDownloaderModel
 
 
-class DownloadSettingsAdmin(BaseAdmin):
+class DownloadSettingsAdmin(EISZDownloaderAdmin):
     model = models.DownloadSettings
 
 
-class LogInSettingsAdmin(BaseAdmin):
+class LogInSettingsAdmin(EISZDownloaderAdmin):
     model = models.LogInSettings
     not_required_fields = {"folder", "download_duration"}
 
 
-class ParsingSettingsAdmin(BaseAdmin):
+class ParsingSettingsAdmin(EISZDownloaderAdmin):
     model = models.ParsingSettings
 
 
-class ReportAdmin(BaseAdmin):
+class ReportAdmin(EISZDownloaderAdmin):
     model = models.Report
     not_required_fields = set(f"step_{x}" for x in range(1, 8))
     not_required_fields.update(f"filter_title_{x}" for x in range(1, 11))

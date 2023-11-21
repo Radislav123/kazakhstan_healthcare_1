@@ -1,33 +1,20 @@
-from typing import Self
-
 from django.db import models
-from parsing_helper import models as helper_models
 
-from eisz_downloader.validators import validate_path
+from core import models as core_models
+from core.validators import validate_path
+from eisz_downloader.settings import Settings
 
 
-class BaseModel(helper_models.BaseModel):
+class EISZDownloaderModel(core_models.CoreModel):
     class Meta:
         abstract = True
 
+    settings = Settings()
 
-class SingletonModel(BaseModel):
+
+class SingletonModel(core_models.SingletonModel, EISZDownloaderModel):
     class Meta:
         abstract = True
-
-    _object: Self = None
-
-    def save(self, *args, **kwargs) -> None:
-        obj = self.__class__.objects.all().first()
-        if obj is not None:
-            self.__class__.objects.all().exclude(id = self.id).delete()
-        super().save(*args, **kwargs)
-
-    @classmethod
-    def get(cls) -> Self:
-        if cls._object is None:
-            cls._object = cls.objects.all().first()
-        return cls._object
 
 
 class DownloadSettings(SingletonModel):
@@ -43,7 +30,7 @@ class DownloadSettings(SingletonModel):
     end_date = models.DateField("Конец периода")
 
 
-class LogInSettings(BaseModel):
+class LogInSettings(EISZDownloaderModel):
     class Meta:
         verbose_name_plural = "log in settings"
 
@@ -65,7 +52,7 @@ class ParsingSettings(SingletonModel):
     show_browser = models.BooleanField("Показывать браузер", default = False)
 
 
-class Report(BaseModel):
+class Report(EISZDownloaderModel):
     download = models.BooleanField("Скачивать")
     folder = models.CharField("Папка для скачивания", max_length = 1000, null = True)
     name = models.CharField("Название файла", max_length = 255)

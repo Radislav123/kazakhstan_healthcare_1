@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives.serialization import Encoding, pkcs12
 from parsing_helper.web_elements import ExtendedWebElement
 
 from pages.eisz import base_page
-from parser import models
+from eisz_downloader import models
 
 
 # https://www.eisz.kz/edslogin
