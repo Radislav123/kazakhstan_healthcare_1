@@ -5,7 +5,8 @@ import shutil
 import time
 from pathlib import Path
 
-from pages import LogInPage, ReportsLogInPage, ReportsPage
+from pages.eisz import LogInPage
+from pages.eisz.reports import ReportsLogInPage, ReportsPage
 from parser import models
 from parser.management.commands import parser_browser_command
 

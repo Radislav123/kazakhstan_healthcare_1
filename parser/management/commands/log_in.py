@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from pages import DigitalLogInPage, LogInPage
+from pages.eisz import DigitalLogInPage, LogInPage
 from parser import models
 from parser.management.commands import parser_browser_command
 

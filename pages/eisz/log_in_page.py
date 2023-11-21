@@ -1,6 +1,6 @@
 from parsing_helper.web_elements import ExtendedWebElement
 
-from pages import base_page
+from pages.eisz import base_page
 
 
 # https://www.eisz.kz/login

@@ -4,7 +4,7 @@ import cryptography.x509.name
 from cryptography.hazmat.primitives.serialization import Encoding, pkcs12
 from parsing_helper.web_elements import ExtendedWebElement
 
-from pages import base_page
+from pages.eisz import base_page
 from parser import models
 
 
