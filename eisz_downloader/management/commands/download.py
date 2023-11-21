@@ -5,17 +5,17 @@ import shutil
 import time
 from pathlib import Path
 
+from eisz_downloader import models
+from eisz_downloader.management.commands import eisz_downloader_browser_command
 from pages.eisz import LogInPage
 from pages.eisz.reports import ReportsLogInPage, ReportsPage
-from parser import models
-from parser.management.commands import parser_browser_command
 
 
 class DownloadNotFinishedException(Exception):
     pass
 
 
-class Command(parser_browser_command.ParserBrowserCommand):
+class Command(eisz_downloader_browser_command.EISZDownloaderBrowserCommand):
     begin_time: datetime.datetime
     end_time: datetime.datetime
 

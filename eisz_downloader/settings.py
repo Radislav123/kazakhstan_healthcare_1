@@ -2,11 +2,11 @@ from pathlib import Path
 
 from parsing_helper import settings as helper_settings
 
-from .apps import ParserConfig
+from eisz_downloader.apps import EISZDownloaderConfig
 
 
 class Settings(helper_settings.Settings):
-    APP_NAME = ParserConfig.name
+    APP_NAME = EISZDownloaderConfig.name
 
     def __init__(self):
         super().__init__()
@@ -29,5 +29,6 @@ class Settings(helper_settings.Settings):
 
         self.TEMP_DOWNLOAD_FOLDER = str(Path(f"{Path(__file__).resolve().parent.parent}/downloads_temp").resolve())
         self.CLEAR_TEMP_DOWNLOAD_FOLDER = True
+        # noinspection SpellCheckingInspection
         self.NOT_DOWNLOADED_EXTENSIONS = ("tmp", "crdownload")
         self.DOWNLOAD_DATE_FORMAT = "%d.%m.%Y"

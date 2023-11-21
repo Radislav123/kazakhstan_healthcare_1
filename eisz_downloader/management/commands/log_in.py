@@ -1,12 +1,12 @@
 import json
 from pathlib import Path
 
+from eisz_downloader import models
+from eisz_downloader.management.commands import eisz_downloader_browser_command
 from pages.eisz import DigitalLogInPage, LogInPage
-from parser import models
-from parser.management.commands import parser_browser_command
 
 
-class Command(parser_browser_command.ParserBrowserCommand):
+class Command(eisz_downloader_browser_command.EISZDownloaderBrowserCommand):
     def run(self, log_in_settings: models.LogInSettings) -> None:
         log_in_page = LogInPage(self.driver)
         log_in_page.log_in(log_in_settings.iin, log_in_settings.password)

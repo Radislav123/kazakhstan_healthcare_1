@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ParserConfig(AppConfig):
+class EISZDownloaderConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "parser"
+    name = "eisz_downloader"

@@ -3,7 +3,7 @@ from typing import Self
 from django.db import models
 from parsing_helper import models as helper_models
 
-from parser.validators import validate_path
+from eisz_downloader.validators import validate_path
 
 
 class BaseModel(helper_models.BaseModel):

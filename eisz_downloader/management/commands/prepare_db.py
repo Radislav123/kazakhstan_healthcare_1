@@ -1,6 +1,6 @@
 from parsing_helper.django_commands import create_admin
 
-from parser import models, settings
+from eisz_downloader import models, settings
 
 
 class Command(create_admin.CreateAdminCommand):

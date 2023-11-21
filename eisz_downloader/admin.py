@@ -1,6 +1,6 @@
 from parsing_helper import admin as helper_admin
 
-from parser import models
+from eisz_downloader import models
 
 
 class BaseAdmin(helper_admin.BaseAdmin):

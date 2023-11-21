@@ -8,15 +8,15 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 from webdriver_manager.firefox import GeckoDriverManager
 
-from parser import models
-from parser.management.commands import parser_command
+from eisz_downloader import models
+from eisz_downloader.management.commands import eisz_downloader_command
 
 
 class DownloadException(Exception):
     pass
 
 
-class ParserBrowserCommand(parser_command.ParserCommand):
+class EISZDownloaderBrowserCommand(eisz_downloader_command.EISZDownloaderCommand):
     driver: Chrome
 
     def handle(self, *args, **options) -> None:
