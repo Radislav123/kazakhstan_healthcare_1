@@ -21,6 +21,8 @@ class Settings(helper_settings.Settings):
         self.PARSING_SETTINGS_PATH = None
         self.REPORTS_PATH = None
 
+        self.JS_CODE_FOLDER = "js"
+
         self.TEMP_DOWNLOAD_FOLDER = str(Path(f"{Path(__file__).resolve().parent.parent}/downloads_temp").resolve())
         self.CLEAR_TEMP_DOWNLOAD_FOLDER = True
         # noinspection SpellCheckingInspection

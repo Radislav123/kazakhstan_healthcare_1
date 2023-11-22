@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class EISZConfig(AppConfig):
+class DamumedConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "eisz"
+    name = "damumed"
