@@ -7,6 +7,7 @@ from damumed.management.commands import damumed_command
 
 class DamumedBrowserCommand(damumed_command.DamumedCommand, core_browser_command.CoreBrowserCommand):
     driver: Chrome
+    download_settings_model = models.DownloadSettings
     log_in_settings_model = models.LogInSettings
     parsing_settings_model = models.ParsingSettings
 

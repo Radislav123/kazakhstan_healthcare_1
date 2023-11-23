@@ -1,4 +1,5 @@
 import pathlib
+from typing import Type
 
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions
@@ -7,7 +8,6 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 from webdriver_manager.firefox import GeckoDriverManager
-from typing import Type
 
 from core import models
 from core.management.commands import core_command
@@ -18,33 +18,35 @@ class DownloadException(Exception):
 
 
 class CoreBrowserCommand(core_command.CoreCommand):
+    download_settings_model: Type[models.DownloadSettingsModel]
     log_in_settings_model: Type[models.LogInSettingsModel]
     parsing_settings_model: Type[models.ParsingSettingsModel]
     driver: Chrome
 
     def handle(self, *args, **options) -> None:
         errors = []
-        logins = self.log_in_settings_model.objects.filter(download = True)
-        for log_in_settings in logins:
-            try:
-                self.before_command(log_in_settings)
-                self.run(log_in_settings)
-                self.after_command(log_in_settings)
-            except Exception as error:
-                self.except_command(log_in_settings)
-                errors.append(error)
-            finally:
-                self.finally_command(log_in_settings)
+        if self.download_settings_model.get().download:
+            logins = self.log_in_settings_model.objects.filter(download = True)
+            for log_in_settings in logins:
+                try:
+                    self.before_command(log_in_settings)
+                    self.run(log_in_settings)
+                    self.after_command(log_in_settings)
+                except Exception as error:
+                    self.except_command(log_in_settings)
+                    errors.append(error)
+                finally:
+                    self.finally_command(log_in_settings)
 
-        if errors:
-            self.logger.exception("========================================")
-            for error in errors:
-                self.logger.exception("----------------------------------------")
-                self.logger.exception(type(error))
-                self.logger.exception(error)
-                self.logger.exception("----------------------------------------")
-            self.logger.exception("========================================")
-            raise DownloadException from errors[0]
+            if errors:
+                self.logger.exception("========================================")
+                for error in errors:
+                    self.logger.exception("----------------------------------------")
+                    self.logger.exception(type(error))
+                    self.logger.exception(error)
+                    self.logger.exception("----------------------------------------")
+                self.logger.exception("========================================")
+                raise DownloadException from errors[0]
 
     def before_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         self.prepare_chrome_driver()

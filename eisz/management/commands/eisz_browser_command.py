@@ -7,6 +7,7 @@ from eisz.management.commands import eisz_command
 
 class EISZBrowserCommand(eisz_command.EISZCommand, core_browser_command.CoreBrowserCommand):
     driver: Chrome
+    download_settings_model = models.DownloadSettings
     log_in_settings_model = models.LogInSettings
     parsing_settings_model = models.ParsingSettings
 

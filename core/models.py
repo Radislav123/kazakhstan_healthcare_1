@@ -38,6 +38,7 @@ class DownloadSettingsModel(CoreSingletonModel):
         abstract = True
         verbose_name_plural = "download settings"
 
+    download = models.BooleanField("Скачивать")
     folder = models.CharField("Папка для скачивания", max_length = 1000, validators = [validate_path])
     format = models.CharField("Формат скачивания", max_length = 100)
     # в секундах
