@@ -43,6 +43,7 @@ class CoreSettings(CoreSingletonModel):
         max_length = 1000,
         validators = [validate_path]
     )
+    chrome_profile_id = models.CharField("Профиль", max_length = 100)
 
 
 class DownloadSettingsModel(CoreSingletonModel):

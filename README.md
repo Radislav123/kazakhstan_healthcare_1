@@ -5,9 +5,10 @@
     ```shell
     git clone https://github.com/Radislav123/kazakhstan_healthcare_1.git
     ```
-3) подготовить БД:
-    ```shell
-    python manage.py makemigrations core, eisz, damumed
-    python manage.py migrate
-    python manage.py prepare_db
-    ```
+3) подготовить БД - [*start/prepare.bat*](start/prepare.bat)
+
+
+# Запуск
+
+1) [*start/runserver.bat*](start/runserver.bat) - запуск панели администратора
+2) [*start/start.bat*](start/start.bat) - запуск программы

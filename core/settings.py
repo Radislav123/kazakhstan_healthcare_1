@@ -31,4 +31,4 @@ class Settings(helper_settings.Settings):
         # noinspection SpellCheckingInspection
         self.NOT_DOWNLOADED_EXTENSIONS = ("tmp", "crdownload")
 
-        self.CHROME_PROFILE_COPY_FOLDER = f"{self.PROJECT_FOLDER}/chrome_profile/User Data"
+        self.CHROME_PROFILE_FOLDER = f"{self.PROJECT_FOLDER}/chrome_profile/User Data"
