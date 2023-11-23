@@ -9,7 +9,7 @@ from pages.eisz import base_page
 
 
 # https://www.eisz.kz/edslogin
-class DigitalLogInPage(base_page.BasePage):
+class SignatureLogInPage(base_page.BasePage):
     path = "edslogin"
 
     def __init__(self, driver) -> None:

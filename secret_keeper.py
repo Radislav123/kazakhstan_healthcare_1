@@ -10,6 +10,9 @@ if TYPE_CHECKING:
 class SecretKeeper(secret_keeper.SecretKeeper):
     Module = secret_keeper.SecretKeeper.Module
 
+    class CoreSettings(Module):
+        chrome_profile_folder: str
+
     class DownloadSettings(Module):
         folder: str
         format: str
@@ -25,6 +28,7 @@ class SecretKeeper(secret_keeper.SecretKeeper):
     class Reports(Module):
         values: list[dict[str, str]]
 
+    core_settings: CoreSettings
     download_settings: DownloadSettings
     log_in_settings: LogInSettings
     parsing_settings: ParsingSettings
@@ -33,6 +37,7 @@ class SecretKeeper(secret_keeper.SecretKeeper):
     def __init__(self, settings: "CoreSettings") -> None:
         super().__init__(settings)
 
+        self.add_module("core_settings", settings.CORE_SETTINGS_PATH)
         if settings.DOWNLOAD_SETTINGS_PATH:
             self.add_module("download_settings", settings.DOWNLOAD_SETTINGS_PATH)
         if settings.LOG_IN_SETTINGS_PATH:

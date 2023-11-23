@@ -4,7 +4,7 @@ from pathlib import Path
 from core.management.commands import core_log_in_command
 from eisz import models
 from eisz.management.commands import eisz_browser_command
-from pages.eisz import DigitalLogInPage, LogInPage
+from pages.eisz import LogInPage, SignatureLogInPage
 
 
 class Command(eisz_browser_command.EISZBrowserCommand, core_log_in_command.CoreLogInCommand):
@@ -14,7 +14,7 @@ class Command(eisz_browser_command.EISZBrowserCommand, core_log_in_command.CoreL
         log_in_page = LogInPage(self.driver)
         log_in_page.log_in(log_in_settings.iin, log_in_settings.password)
 
-        digital_log_in_page = DigitalLogInPage(self.driver)
+        digital_log_in_page = SignatureLogInPage(self.driver)
         digital_log_in_page.log_in(log_in_settings)
 
         Path(self.settings.LOG_IN_FOLDER).mkdir(parents = True, exist_ok = True)

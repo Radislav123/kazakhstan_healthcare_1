@@ -33,6 +33,18 @@ class CoreSingletonModel(CoreModel):
         return cls._object
 
 
+class CoreSettings(CoreSingletonModel):
+    class Meta:
+        verbose_name_plural = "core settings"
+
+    # https://stackoverflow.com/a/31063104/13186004
+    chrome_profile_folder = models.CharField(
+        "Расположение профиля Google Chrome",
+        max_length = 1000,
+        validators = [validate_path]
+    )
+
+
 class DownloadSettingsModel(CoreSingletonModel):
     class Meta:
         abstract = True

@@ -4,6 +4,7 @@ migrations/
 secrets/
 webdrivers/
 downloads*/
+chrome_profile/
 
 db.sqlite3
 temp*
