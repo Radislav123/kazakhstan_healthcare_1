@@ -1,20 +1,17 @@
 from typing import Type
 
-from parsing_helper.django_commands import create_admin
-
-from core import models, settings
+from core import models
+from core.management.commands import core_command
 from secret_keeper import SecretKeeper
 
 
-class CorePrepareDBCommand(create_admin.CreateAdminCommand):
-    settings = settings.Settings()
+class CorePrepareDBCommand(core_command.CoreCommand):
     download_settings_model: Type[models.DownloadSettingsModel]
     log_in_settings_model: Type[models.LogInSettingsModel]
     parsing_settings_model: Type[models.ParsingSettingsModel]
     report_model: Type[models.ReportModel]
 
     def handle(self, *args, **options) -> None:
-        super().handle(*args, **options)
         self.prepare_db()
 
     def prepare_singleton(self, secret_module: SecretKeeper.Module, model: Type[models.CoreSingletonModel]) -> None:
@@ -25,6 +22,7 @@ class CorePrepareDBCommand(create_admin.CreateAdminCommand):
     def prepare_several_objects(self, secret_module: SecretKeeper.Module, model: Type[models.CoreModel]) -> None:
         model.objects.all().delete()
         objects = []
+        # noinspection PyUnresolvedReferences
         for value in secret_module.values:
             objects.append(model(**value))
         model.objects.bulk_create(objects)
