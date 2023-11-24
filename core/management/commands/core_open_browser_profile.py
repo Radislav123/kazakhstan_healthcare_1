@@ -14,7 +14,8 @@ class Command(core_browser_profile_command.CoreBrowserProfileCommand):
     def handle(self, *args, **options) -> None:
         try:
             self.prepare_chrome_driver()
-            input("Нажмите ввод (Enter) когда закончите работу с браузером.\т")
+            input("Нажмите ввод (Enter) когда закончите работу с браузером.\n")
+            print("Браузер закрывается.")
         finally:
             if hasattr(self, "driver"):
                 try:

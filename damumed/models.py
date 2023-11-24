@@ -1,3 +1,5 @@
+from django.db import models
+
 from core import models as core_models
 from damumed.settings import Settings
 
@@ -22,6 +24,9 @@ class DownloadSettings(DamumedSingletonModel, core_models.DownloadSettingsModel)
 class LogInSettings(DamumedModel, core_models.LogInSettingsModel):
     class Meta:
         verbose_name_plural = "log in settings"
+
+    login = models.CharField("Логин", max_length = 100)
+    password = models.CharField("Пароль", max_length = 100)
 
 
 class ParsingSettings(DamumedSingletonModel, core_models.ParsingSettingsModel):
