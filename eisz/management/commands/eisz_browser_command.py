@@ -10,6 +10,7 @@ class EISZBrowserCommand(eisz_command.EISZCommand, core_browser_command.CoreBrow
     download_settings_model = models.DownloadSettings
     log_in_settings_model = models.LogInSettings
     parsing_settings_model = models.ParsingSettings
+    use_chrome_profile = False
 
     def get_cookies_path(self, log_in_settings: models.LogInSettings) -> str:
         return self.settings.AUTH_COOKIES_PATH.replace("placeholder", f"eisz_{log_in_settings.id}")

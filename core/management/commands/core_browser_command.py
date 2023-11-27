@@ -2,12 +2,10 @@ import pathlib
 from typing import Type
 
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions
+from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
-from webdriver_manager.firefox import GeckoDriverManager
 
 from core import models
 from core.management.commands import core_command
@@ -18,10 +16,11 @@ class DownloadException(Exception):
 
 
 class CoreBrowserCommand(core_command.CoreCommand):
+    driver: Chrome
     download_settings_model: Type[models.DownloadSettingsModel]
     log_in_settings_model: Type[models.LogInSettingsModel]
     parsing_settings_model: Type[models.ParsingSettingsModel]
-    driver: Chrome
+    use_chrome_profile: bool
 
     def handle(self, *args, **options) -> None:
         errors = []
@@ -77,6 +76,10 @@ class CoreBrowserCommand(core_command.CoreCommand):
             driver_options.add_argument("--headless")
             driver_options.add_argument("--disable-gpu")
         driver_options.add_argument("--window-size=1920,1080")
+        if self.use_chrome_profile:
+            driver_options.add_argument(f"--user-data-dir={self.settings.CHROME_PROFILE_FOLDER}")
+            driver_options.add_argument(f"--profile-directory={models.CoreSettings.get().chrome_profile_id}")
+
         driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         driver_options.add_experimental_option(
             "prefs",
@@ -90,30 +93,6 @@ class CoreBrowserCommand(core_command.CoreCommand):
         self.driver = Chrome(options = driver_options, service = driver_service)
         self.driver.maximize_window()
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
-
-    def prepare_firefox_driver(self) -> None:
-        parsing_settings = self.parsing_settings_model.get()
-
-        driver_options = FirefoxOptions()
-        if not parsing_settings.show_browser:
-            driver_options.add_argument("--headless")
-        driver_options.add_argument("--width=1920")
-        driver_options.add_argument("--height=1080")
-        driver_options.set_preference("browser.download.dir", self.settings.TEMP_DOWNLOAD_FOLDER)
-        driver_options.set_preference("javascript.enabled", True)
-        driver_options.set_preference("dom.serviceWorkers.enabled", True)
-
-        cache_manager = DriverCacheManager(root_dir = f"{pathlib.Path.cwd()}/webdrivers/{self.settings.APP_NAME}")
-        driver_manager = GeckoDriverManager(cache_manager = cache_manager).install()
-        driver_service = FirefoxService(executable_path = driver_manager)
-
-        self.driver = Firefox(
-            options = driver_options,
-            service = driver_service,
-            # todo: местоположение не меняется, хотя должно
-            log_path = f"{self.settings.LOG_FOLDER}/geckodriver.log"
-        )
-        self.driver.maximize_window()
 
     def run(self, log_in_settings: models.LogInSettingsModel) -> None:
         raise NotImplementedError()
