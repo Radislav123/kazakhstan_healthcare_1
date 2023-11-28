@@ -1,5 +1,6 @@
 import datetime
 import os
+import shutil
 import time
 from pathlib import Path
 from typing import Type
@@ -14,13 +15,13 @@ class DownloadNotFinishedException(Exception):
 
 class CoreDownloadCommand(core_browser_command.CoreBrowserCommand):
     download_settings_model: Type[models.DownloadSettingsModel]
-    report_model: Type[models.ReportModel]
     begin_time: datetime.datetime
     end_time: datetime.datetime
 
     def before_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         super().before_command(log_in_settings)
         self.begin_time = datetime.datetime.now()
+        self.remove_not_downloaded()
 
     def after_command(self, log_in_settings: models.LogInSettingsModel) -> None:
         super().after_command(log_in_settings)
@@ -36,6 +37,8 @@ class CoreDownloadCommand(core_browser_command.CoreBrowserCommand):
         self.end_time = datetime.datetime.now()
         log_in_settings.download_duration = self.end_time - self.begin_time
         log_in_settings.save()
+        if os.path.exists(self.settings.TEMP_DOWNLOAD_FOLDER):
+            shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)
         super().finally_command(log_in_settings)
 
     def wait_download(self) -> None:

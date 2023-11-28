@@ -14,3 +14,4 @@ class Settings(settings.Settings):
         self.LOG_IN_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/log_in.json"
         self.PARSING_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/parsing.json"
         self.REPORTS_PATH = f"{self.SETTINGS_FOLDER}/reports.json"
+        self.SCREENING_REPORTS_PATH = f"{self.SETTINGS_FOLDER}/screening_reports.json"

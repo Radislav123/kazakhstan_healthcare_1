@@ -1,6 +1,4 @@
 import json
-import os
-import shutil
 
 from core.management.commands import core_download_command
 from eisz import models
@@ -11,16 +9,14 @@ from pages.eisz.reports import ReportsLogInPage, ReportsPage
 
 class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.CoreDownloadCommand):
     download_settings_model = models.DownloadSettings
-    report_model = models.Report
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
-        self.remove_not_downloaded()
         log_in_page = LogInPage(self.driver)
         with open(self.get_cookies_path(log_in_settings)) as file:
             cookies = json.load(file)
             log_in_page.set_cookies(cookies)
 
-        for report in self.report_model.objects.filter(download = True):
+        for report in models.Report.objects.filter(download = True):
             counter = 3
             while True:
                 try:
@@ -39,6 +35,3 @@ class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.Cor
                     if counter <= 0:
                         self.remove_not_downloaded()
                         raise error
-
-        if os.path.exists(self.settings.TEMP_DOWNLOAD_FOLDER):
-            shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)

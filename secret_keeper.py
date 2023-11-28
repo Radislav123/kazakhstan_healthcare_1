@@ -10,6 +10,9 @@ if TYPE_CHECKING:
 class SecretKeeper(secret_keeper.SecretKeeper):
     Module = secret_keeper.SecretKeeper.Module
 
+    class DictCollection(Module):
+        value: list[dict[str, str]]
+
     class CoreSettings(Module):
         chrome_profile_folder: str
 
@@ -19,20 +22,15 @@ class SecretKeeper(secret_keeper.SecretKeeper):
         max_download_waiting: int
         download_check_period: int
 
-    class LogInSettings(Module):
-        values: list[dict[str, str]]
-
     class ParsingSettings(Module):
         show_browser: bool
 
-    class Reports(Module):
-        values: list[dict[str, str]]
-
     core_settings: CoreSettings
     download_settings: DownloadSettings
-    log_in_settings: LogInSettings
+    log_in_settings: DictCollection
     parsing_settings: ParsingSettings
-    reports: Reports
+    reports: DictCollection
+    screening_reports: DictCollection
 
     def __init__(self, settings: "CoreSettings") -> None:
         super().__init__(settings)
@@ -46,3 +44,5 @@ class SecretKeeper(secret_keeper.SecretKeeper):
             self.add_module("parsing_settings", settings.PARSING_SETTINGS_PATH)
         if settings.REPORTS_PATH:
             self.add_module("reports", settings.REPORTS_PATH)
+        if settings.SCREENING_REPORTS_PATH:
+            self.add_module("screening_reports", settings.SCREENING_REPORTS_PATH)

@@ -66,13 +66,11 @@ class CoreBrowserCommand(core_command.CoreCommand):
                     pass
 
     def prepare_chrome_driver(self) -> None:
-        parsing_settings = self.parsing_settings_model.get()
-
         driver_options = ChromeOptions()
         # этот параметр тоже нужен, так как в режиме headless с некоторыми элементами нельзя взаимодействовать
         driver_options.add_argument("--no-sandbox")
         driver_options.add_argument("--disable-blink-features=AutomationControlled")
-        if not parsing_settings.show_browser:
+        if hasattr(self, "parsing_settings_model") and not self.parsing_settings_model.get().show_browser:
             driver_options.add_argument("--headless")
             driver_options.add_argument("--disable-gpu")
         driver_options.add_argument("--window-size=1920,1080")

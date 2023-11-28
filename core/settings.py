@@ -22,11 +22,12 @@ class Settings(helper_settings.Settings):
         self.LOG_IN_SETTINGS_PATH = None
         self.PARSING_SETTINGS_PATH = None
         self.REPORTS_PATH = None
+        self.SCREENING_REPORTS_PATH = None
         self.CORE_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/core.json"
 
         self.JS_CODE_FOLDER = "js"
 
-        self.TEMP_DOWNLOAD_FOLDER = f"{self.PROJECT_FOLDER}/downloads_temp"
+        self.TEMP_DOWNLOAD_FOLDER = str(Path(f"{self.PROJECT_FOLDER}/downloads_temp").resolve())
         self.CLEAR_TEMP_DOWNLOAD_FOLDER = True
         # noinspection SpellCheckingInspection
         self.NOT_DOWNLOADED_EXTENSIONS = ("tmp", "crdownload")

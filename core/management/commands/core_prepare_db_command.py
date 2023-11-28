@@ -19,7 +19,7 @@ class CorePrepareDBCommand(core_command.CoreCommand):
         download_settings.save()
         self.logger.info(f"The {download_settings} was created.")
 
-    def prepare_several_objects(self, secret_module: SecretKeeper.Module, model: Type[models.CoreModel]) -> None:
+    def prepare_several_objects(self, secret_module: SecretKeeper.DictCollection, model: Type[models.CoreModel]) -> None:
         model.objects.all().delete()
         objects = []
         # noinspection PyUnresolvedReferences

@@ -3,12 +3,13 @@ from pathlib import Path
 
 from core.management.commands import core_log_in_command
 from damumed import models
-from damumed.management.commands import damumed_browser_profile_command
+from damumed.management.commands import damumed_browser_command
 from pages.damumed import LogInPage, MainPage
 
 
-class Command(damumed_browser_profile_command.DamumedBrowserProfileCommand, core_log_in_command.CoreLogInCommand):
+class Command(damumed_browser_command.DamumedBrowserCommand, core_log_in_command.CoreLogInCommand):
     log_in_settings_model = models.LogInSettings
+    use_chrome_profile = True
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
         main_page = MainPage(self.driver)

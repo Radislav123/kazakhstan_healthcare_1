@@ -23,8 +23,22 @@ class ParsingSettingsAdmin(DamumedAdmin):
 
 class ReportAdmin(DamumedAdmin):
     model = models.Report
-    not_required_fields = ("folder",)
+    not_required_fields = {"folder", }
 
 
-model_admins_to_register = [DownloadSettingsAdmin, LogInSettingsAdmin, ParsingSettingsAdmin, ReportAdmin]
+class ScreeningReportAdmin(DamumedAdmin):
+    model = models.ScreeningReport
+    not_required_fields = {"folder", "from_age", "to_age"}
+    not_required_fields.update(f"filter_title_{x}" for x in range(1, 11))
+    not_required_fields.update(f"filter_value_{x}" for x in range(1, 11))
+    not_required_fields.update(f"checkbox_title_{x}" for x in range(1, 11))
+
+
+model_admins_to_register = [
+    DownloadSettingsAdmin,
+    LogInSettingsAdmin,
+    ParsingSettingsAdmin,
+    ReportAdmin,
+    ScreeningReportAdmin
+]
 helper_admin.register_models(model_admins_to_register)

@@ -8,3 +8,7 @@ class Command(damumed_command.DamumedCommand, core_prepare_db_command.CorePrepar
     log_in_settings_model = models.LogInSettings
     parsing_settings_model = models.ParsingSettings
     report_model = models.Report
+
+    def prepare_db(self) -> None:
+        super().prepare_db()
+        self.prepare_several_objects(self.settings.secrets.screening_reports, models.ScreeningReport)
