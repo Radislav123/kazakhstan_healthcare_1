@@ -7,9 +7,5 @@ class CoreAdmin(helper_admin.BaseAdmin):
     model = models.CoreModel
 
 
-class CoreSettingsAdmin(CoreAdmin):
-    model = models.CoreSettings
-
-
-model_admins_to_register = [CoreSettingsAdmin]
+model_admins_to_register = []
 helper_admin.register_models(model_admins_to_register)

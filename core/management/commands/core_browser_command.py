@@ -76,7 +76,6 @@ class CoreBrowserCommand(core_command.CoreCommand):
         driver_options.add_argument("--window-size=1920,1080")
         if self.use_chrome_profile:
             driver_options.add_argument(f"--user-data-dir={self.settings.CHROME_PROFILE_FOLDER}")
-            driver_options.add_argument(f"--profile-directory={models.CoreSettings.get().chrome_profile_id}")
 
         driver_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         driver_options.add_experimental_option(
