@@ -21,6 +21,8 @@ class DownloadSettings(EISZSingletonModel, core_models.DownloadSettingsModel):
     class Meta:
         verbose_name_plural = "настройки скачивания"
 
+    format = models.CharField("Формат скачивания", max_length = 100)
+
 
 class LogInSettings(EISZModel, core_models.LogInSettingsModel):
     class Meta:
