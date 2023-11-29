@@ -10,12 +10,13 @@ from pages.eisz.reports import ReportsLogInPage, ReportsPage
 class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.CoreDownloadCommand):
     download_settings_model = models.DownloadSettings
 
-    def run(self, log_in_settings: models.LogInSettings) -> None:
+    def before_command(self, log_in_settings: models.LogInSettings) -> None:
         log_in_page = LogInPage(self.driver)
         with open(self.get_cookies_path(log_in_settings)) as file:
             cookies = json.load(file)
             log_in_page.set_cookies(cookies)
 
+    def run(self, log_in_settings: models.LogInSettings) -> None:
         for report in models.Report.objects.filter(download = True):
             counter = 3
             while True:

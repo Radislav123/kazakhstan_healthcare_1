@@ -9,7 +9,8 @@ from pages.damumed import MainPage, UnloadingPage
 class Command(damumed_browser_command.DamumedBrowserCommand, core_download_command.CoreDownloadCommand):
     download_settings_model = models.DownloadSettings
 
-    def run(self, log_in_settings: models.LogInSettings) -> None:
+    def before_command(self, log_in_settings: models.LogInSettings) -> None:
+        super().before_command(log_in_settings)
         main_page = MainPage(self.driver)
         main_page.open()
         main_page.driver.delete_all_cookies()
@@ -18,6 +19,7 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
             cookies = json.load(file)
             main_page.set_cookies(cookies)
 
+    def run(self, log_in_settings: models.LogInSettings) -> None:
         for report in models.Unloading.objects.filter(download = True):
             counter = 3
             while True:
