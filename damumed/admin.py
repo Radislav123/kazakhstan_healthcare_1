@@ -21,8 +21,8 @@ class ParsingSettingsAdmin(DamumedAdmin):
     model = models.ParsingSettings
 
 
-class ScreeningReportAdmin(DamumedAdmin):
-    model = models.ScreeningReport
+class ScreeningAdmin(DamumedAdmin):
+    model = models.Screening
     not_required_fields = {"folder", "from_age", "to_age"}
     not_required_fields.update(f"filter_title_{x}" for x in range(1, 11))
     not_required_fields.update(f"filter_value_{x}" for x in range(1, 11))
@@ -33,11 +33,12 @@ class ScreeningReportAdmin(DamumedAdmin):
         "name": "filter_title_1",
         "from_age": "filter_title_1",
         "to_age": "filter_title_1",
+        **{f"checkbox_title_{x}": "filter_title_1" for x in range(1, 11)},
     }
 
 
-class UnloadingReportAdmin(DamumedAdmin):
-    model = models.UnloadingReport
+class UnloadingAdmin(DamumedAdmin):
+    model = models.Unloading
     not_required_fields = {"folder"}
     not_required_fields.update(f"filter_title_{x}" for x in range(1, 11))
     not_required_fields.update(f"filter_value_{x}" for x in range(1, 11))
@@ -53,14 +54,27 @@ class UnloadingReportAdmin(DamumedAdmin):
 class ReportAdmin(DamumedAdmin):
     model = models.Report
     not_required_fields = {"folder", }
+    not_required_fields.update(f"step_{x}" for x in range(1, 11))
+    not_required_fields.update(f"filter_title_{x}" for x in range(1, 11))
+    not_required_fields.update(f"filter_value_{x}" for x in range(1, 11))
+    not_required_fields.update(f"checkbox_filter_title_{x}" for x in range(1, 11))
+    not_required_fields.update(f"checkbox_filter_value_{x}" for x in range(1, 11))
+    not_required_fields.update(f"multiple_filter_title_{x}" for x in range(1, 11))
+    not_required_fields.update(f"multiple_filter_value_{x}" for x in range(1, 11))
+    extra_list_display = {
+        "download": "filter_title_1",
+        "folder": "filter_title_1",
+        "name": "filter_title_1",
+        **{f"step_{x}": "filter_title_1" for x in range(1, 11)},
+    }
 
 
 model_admins_to_register = [
     DownloadSettingsAdmin,
     LogInSettingsAdmin,
     ParsingSettingsAdmin,
-    ScreeningReportAdmin,
-    UnloadingReportAdmin,
+    ScreeningAdmin,
+    UnloadingAdmin,
     ReportAdmin,
 ]
 helper_admin.register_models(model_admins_to_register)

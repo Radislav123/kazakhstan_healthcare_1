@@ -36,3 +36,5 @@ class Settings(helper_settings.Settings):
         self.CHROME_PROFILE_FOLDER = f"{self.PROJECT_FOLDER}/chrome_profile/User Data"
 
         self.DOWNLOAD_DATE_FORMAT = "%d.%m.%Y"
+        # в секундах
+        self.REPORT_FORM_TIMEOUT = 20 * 60

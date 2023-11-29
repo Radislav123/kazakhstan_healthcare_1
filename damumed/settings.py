@@ -13,6 +13,6 @@ class Settings(settings.Settings):
         self.DOWNLOAD_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/download.json"
         self.LOG_IN_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/log_in.json"
         self.PARSING_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/parsing.json"
-        self.SCREENING_REPORTS_PATH = f"{self.SETTINGS_FOLDER}/screening_reports.json"
-        self.UNLOADING_REPORTS_PATH = f"{self.SETTINGS_FOLDER}/unloading_reports.json"
+        self.SCREENING_REPORTS_PATH = f"{self.SETTINGS_FOLDER}/screenings.json"
+        self.UNLOADING_REPORTS_PATH = f"{self.SETTINGS_FOLDER}/unloadings.json"
         self.REPORTS_PATH = f"{self.SETTINGS_FOLDER}/reports.json"

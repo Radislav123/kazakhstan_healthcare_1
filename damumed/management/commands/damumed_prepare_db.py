@@ -11,5 +11,5 @@ class Command(damumed_command.DamumedCommand, core_prepare_db_command.CorePrepar
 
     def prepare_db(self) -> None:
         super().prepare_db()
-        self.prepare_several_objects(self.settings.secrets.screening_reports, models.ScreeningReport)
-        self.prepare_several_objects(self.settings.secrets.unloading_reports, models.UnloadingReport)
+        self.prepare_several_objects(self.settings.secrets.screening_reports, models.Screening)
+        self.prepare_several_objects(self.settings.secrets.unloading_reports, models.Unloading)

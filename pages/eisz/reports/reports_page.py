@@ -149,7 +149,7 @@ class ReportsPage(reports_base_page.ReportsBasePage):
                 if counter <= 0:
                     raise exception
 
-        counter = 20 * 60 // self.settings.SELENIUM_DEFAULT_TIMEOUT
+        counter = self.settings.REPORT_FORM_TIMEOUT // self.settings.SELENIUM_DEFAULT_TIMEOUT
         while True:
             try:
                 self.loader_hidden.reset()

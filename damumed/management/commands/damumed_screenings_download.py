@@ -3,7 +3,7 @@ import json
 from core.management.commands import core_download_command
 from damumed import models
 from damumed.management.commands import damumed_browser_command
-from pages.damumed import MainPage, ScreeningPage
+from pages.damumed import MainPage, ScreeningsPage
 
 
 class Command(damumed_browser_command.DamumedBrowserCommand, core_download_command.CoreDownloadCommand):
@@ -18,11 +18,11 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
             cookies = json.load(file)
             main_page.set_cookies(cookies)
 
-        for report in models.ScreeningReport.objects.filter(download = True):
+        for report in models.Screening.objects.filter(download = True):
             counter = 3
             while True:
                 try:
-                    reports_page = ScreeningPage(self.driver)
+                    reports_page = ScreeningsPage(self.driver)
                     reports_page.open()
                     reports_page.filters_button.click()
                     reports_page.age_filter.set(report)

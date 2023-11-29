@@ -13,8 +13,6 @@ class UnloadingPage(base_page.BasePage):
     def __init__(self, driver) -> None:
         super().__init__(driver)
 
-        # noinspection SpellCheckingInspection
-        self.filters_button = ExtendedWebElement(self, '//a[@id = "btnScreeningCandidateJouranlFilter"]')
         self.begin_date_input = ExtendedWebElement(self, '//input[@id = "dtBeginDate"]')
         self.end_date_input = ExtendedWebElement(self, '//input[@id = "dtEndDate"]')
         self.form_button = ExtendedWebElement(self, '//button[contains(@onclick, "getUnload()")]')
@@ -22,7 +20,7 @@ class UnloadingPage(base_page.BasePage):
         self.loader_hidden = ExtendedWebElement(self, '//body[not(@class = "loading")]')
         self.loader_visible = ExtendedWebElement(self, '//body[@class = "loading"]')
 
-    def open_report(self, report: models.UnloadingReport) -> None:
+    def open_report(self, report: models.Unloading) -> None:
         self.open()
 
         for i in range(1, 11):
@@ -45,15 +43,15 @@ class UnloadingPage(base_page.BasePage):
         self.end_date_input.selenium_element.clear()
         self.end_date_input.send_keys(end_date_string)
 
-    def set_filters(self, report: models.UnloadingReport) -> None:
+    def set_filters(self, report: models.Unloading) -> None:
         for i in range(1, 11):
             filter_title = report.get_filter_title(i)
             filter_value = report.get_filter_value(i)
             if filter_title and filter_value:
-                filter_element = ExtendedWebElement(self, f'//label[contains(text(), "{filter_title}")]')
+                filter_element = ExtendedWebElement(self, f'//label[contains(text(), "{filter_title}")]/../..')
                 button = ExtendedWebElement(
                     self,
-                    f'{filter_element.xpath}/../../div/span/span/span[@class = "k-select"]'
+                    f'{filter_element.xpath}/div/span/span/span[@class = "k-select"]'
                 )
                 option = ExtendedWebElement(
                     self,
@@ -66,7 +64,7 @@ class UnloadingPage(base_page.BasePage):
     def download_report(self) -> None:
         self.form_button.click()
 
-        counter = 20 * 60 // self.settings.SELENIUM_DEFAULT_TIMEOUT
+        counter = self.settings.REPORT_FORM_TIMEOUT // self.settings.SELENIUM_DEFAULT_TIMEOUT
         while True:
             try:
                 self.loader_hidden.reset()

@@ -34,7 +34,7 @@ class ParsingSettings(DamumedSingletonModel, core_models.ParsingSettingsModel):
         verbose_name_plural = "настройки парсинга"
 
 
-class ScreeningReport(DamumedModel, core_models.CheckboxMixin, core_models.FiltersMixin, core_models.ReportModel):
+class Screening(DamumedModel, core_models.CheckboxMixin, core_models.FiltersMixin, core_models.ReportModel):
     class Meta:
         verbose_name_plural = "скрининги"
 
@@ -42,11 +42,18 @@ class ScreeningReport(DamumedModel, core_models.CheckboxMixin, core_models.Filte
     to_age = models.IntegerField("Фильтр возраста \"до\"", null = True)
 
 
-class UnloadingReport(DamumedModel, core_models.StepsMixin, core_models.FiltersMixin, core_models.ReportModel):
+class Unloading(DamumedModel, core_models.StepsMixin, core_models.FiltersMixin, core_models.ReportModel):
     class Meta:
         verbose_name_plural = "выгрузки"
 
 
-class Report(DamumedModel, core_models.ReportModel):
+class Report(
+    DamumedModel,
+    core_models.CheckboxFiltersMixin,
+    core_models.MultipleFiltersMixin,
+    core_models.StepsMixin,
+    core_models.FiltersMixin,
+    core_models.ReportModel
+):
     class Meta:
         verbose_name_plural = "отчеты"

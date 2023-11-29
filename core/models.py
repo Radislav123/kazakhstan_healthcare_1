@@ -132,6 +132,70 @@ class StepsMixin(CoreModel):
         return getattr(self, f"step_{step}")
 
 
+class CheckboxFiltersMixin(CoreModel):
+    class Meta:
+        abstract = True
+
+    checkbox_filter_title_1 = models.CharField("Название выборного фильтра 1", max_length = 100, null = True)
+    checkbox_filter_value_1 = models.CharField("Значение выборного фильтра 1", max_length = 100, null = True)
+    checkbox_filter_title_2 = models.CharField("Название выборного фильтра 2", max_length = 100, null = True)
+    checkbox_filter_value_2 = models.CharField("Значение выборного фильтра 2", max_length = 100, null = True)
+    checkbox_filter_title_3 = models.CharField("Название выборного фильтра 3", max_length = 100, null = True)
+    checkbox_filter_value_3 = models.CharField("Значение выборного фильтра 3", max_length = 100, null = True)
+    checkbox_filter_title_4 = models.CharField("Название выборного фильтра 4", max_length = 100, null = True)
+    checkbox_filter_value_4 = models.CharField("Значение выборного фильтра 4", max_length = 100, null = True)
+    checkbox_filter_title_5 = models.CharField("Название выборного фильтра 5", max_length = 100, null = True)
+    checkbox_filter_value_5 = models.CharField("Значение выборного фильтра 5", max_length = 100, null = True)
+    checkbox_filter_title_6 = models.CharField("Название выборного фильтра 6", max_length = 100, null = True)
+    checkbox_filter_value_6 = models.CharField("Значение выборного фильтра 6", max_length = 100, null = True)
+    checkbox_filter_title_7 = models.CharField("Название выборного фильтра 7", max_length = 100, null = True)
+    checkbox_filter_value_7 = models.CharField("Значение выборного фильтра 7", max_length = 100, null = True)
+    checkbox_filter_title_8 = models.CharField("Название выборного фильтра 8", max_length = 100, null = True)
+    checkbox_filter_value_8 = models.CharField("Значение выборного фильтра 8", max_length = 100, null = True)
+    checkbox_filter_title_9 = models.CharField("Название выборного фильтра 9", max_length = 100, null = True)
+    checkbox_filter_value_9 = models.CharField("Значение выборного фильтра 9", max_length = 100, null = True)
+    checkbox_filter_title_10 = models.CharField("Название выборного фильтра 10", max_length = 100, null = True)
+    checkbox_filter_value_10 = models.CharField("Значение выборного фильтра 10", max_length = 100, null = True)
+
+    def get_checkbox_filter_title(self, index: int) -> str | None:
+        return getattr(self, f"checkbox_filter_title_{index}")
+
+    def get_checkbox_filter_value(self, index: int) -> str | None:
+        return getattr(self, f"checkbox_filter_value_{index}")
+
+
+class MultipleFiltersMixin(CoreModel):
+    class Meta:
+        abstract = True
+
+    multiple_filter_title_1 = models.CharField("Название множественного фильтра 1", max_length = 100, null = True)
+    multiple_filter_value_1 = models.CharField("Значение множественного фильтра 1", max_length = 100, null = True)
+    multiple_filter_title_2 = models.CharField("Название множественного фильтра 2", max_length = 100, null = True)
+    multiple_filter_value_2 = models.CharField("Значение множественного фильтра 2", max_length = 100, null = True)
+    multiple_filter_title_3 = models.CharField("Название множественного фильтра 3", max_length = 100, null = True)
+    multiple_filter_value_3 = models.CharField("Значение множественного фильтра 3", max_length = 100, null = True)
+    multiple_filter_title_4 = models.CharField("Название множественного фильтра 4", max_length = 100, null = True)
+    multiple_filter_value_4 = models.CharField("Значение множественного фильтра 4", max_length = 100, null = True)
+    multiple_filter_title_5 = models.CharField("Название множественного фильтра 5", max_length = 100, null = True)
+    multiple_filter_value_5 = models.CharField("Значение множественного фильтра 5", max_length = 100, null = True)
+    multiple_filter_title_6 = models.CharField("Название множественного фильтра 6", max_length = 100, null = True)
+    multiple_filter_value_6 = models.CharField("Значение множественного фильтра 6", max_length = 100, null = True)
+    multiple_filter_title_7 = models.CharField("Название множественного фильтра 7", max_length = 100, null = True)
+    multiple_filter_value_7 = models.CharField("Значение множественного фильтра 7", max_length = 100, null = True)
+    multiple_filter_title_8 = models.CharField("Название множественного фильтра 8", max_length = 100, null = True)
+    multiple_filter_value_8 = models.CharField("Значение множественного фильтра 8", max_length = 100, null = True)
+    multiple_filter_title_9 = models.CharField("Название множественного фильтра 9", max_length = 100, null = True)
+    multiple_filter_value_9 = models.CharField("Значение множественного фильтра 9", max_length = 100, null = True)
+    multiple_filter_title_10 = models.CharField("Название множественного фильтра 10", max_length = 100, null = True)
+    multiple_filter_value_10 = models.CharField("Значение множественного фильтра 10", max_length = 100, null = True)
+
+    def get_multiple_filter_title(self, index: int) -> str | None:
+        return getattr(self, f"multiple_filter_title_{index}")
+
+    def get_multiple_filter_value(self, index: int) -> str | None:
+        return getattr(self, f"multiple_filter_value_{index}")
+
+
 class CheckboxMixin(CoreModel):
     class Meta:
         abstract = True
