@@ -22,8 +22,6 @@ class LogInSettingsAdmin(EISZAdmin):
     actions = ("download_not_finished",)
 
     def download_not_finished(self, request: HttpRequest, queryset: django_models.QuerySet) -> None:
-        # ) -> HttpResponse:
-        # return HttpResponse(status = 200)
         self.message_user(request, "Начато повторное скачивание", messages.SUCCESS)
 
         not_requested = models.LogInSettings.objects.filter(download = True).exclude(id__in = [x.id for x in queryset])
