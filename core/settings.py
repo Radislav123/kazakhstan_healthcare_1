@@ -21,8 +21,9 @@ class Settings(helper_settings.Settings):
         self.DOWNLOAD_SETTINGS_PATH = None
         self.LOG_IN_SETTINGS_PATH = None
         self.PARSING_SETTINGS_PATH = None
-        self.REPORTS_PATH = None
         self.SCREENING_REPORTS_PATH = None
+        self.UNLOADING_REPORTS_PATH = None
+        self.REPORTS_PATH = None
         self.CORE_SETTINGS_PATH = f"{self.SETTINGS_FOLDER}/core.json"
 
         self.JS_CODE_FOLDER = "js"
@@ -33,3 +34,5 @@ class Settings(helper_settings.Settings):
         self.NOT_DOWNLOADED_EXTENSIONS = ("tmp", "crdownload")
 
         self.CHROME_PROFILE_FOLDER = f"{self.PROJECT_FOLDER}/chrome_profile/User Data"
+
+        self.DOWNLOAD_DATE_FORMAT = "%d.%m.%Y"

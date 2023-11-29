@@ -1,28 +1,29 @@
 import json
 
 from core.management.commands import core_download_command
-from eisz import models
-from eisz.management.commands import eisz_browser_command
-from pages.eisz import LogInPage
-from pages.eisz.reports import ReportsLogInPage, ReportsPage
+from damumed import models
+from damumed.management.commands import damumed_browser_command
+from pages.damumed import MainPage, UnloadingPage
 
 
-class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.CoreDownloadCommand):
+class Command(damumed_browser_command.DamumedBrowserCommand, core_download_command.CoreDownloadCommand):
     download_settings_model = models.DownloadSettings
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
-        log_in_page = LogInPage(self.driver)
+        main_page = MainPage(self.driver)
+        main_page.open()
+        main_page.driver.delete_all_cookies()
+        main_page.open()
         with open(self.get_cookies_path(log_in_settings)) as file:
             cookies = json.load(file)
-            log_in_page.set_cookies(cookies)
+            main_page.set_cookies(cookies)
 
-        for report in models.Report.objects.filter(download = True):
+        for report in models.UnloadingReport.objects.filter(download = True):
             counter = 3
             while True:
                 try:
-                    reports_log_in_page = ReportsLogInPage(self.driver)
-                    reports_log_in_page.log_in()
-                    reports_page = ReportsPage(self.driver)
+                    reports_page = UnloadingPage(self.driver)
+                    reports_page.open()
                     reports_page.open_report(report)
                     reports_page.set_period()
                     reports_page.set_filters(report)

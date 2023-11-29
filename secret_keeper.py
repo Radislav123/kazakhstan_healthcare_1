@@ -29,8 +29,9 @@ class SecretKeeper(secret_keeper.SecretKeeper):
     download_settings: DownloadSettings
     log_in_settings: DictCollection
     parsing_settings: ParsingSettings
-    reports: DictCollection
     screening_reports: DictCollection
+    unloading_reports: DictCollection
+    reports: DictCollection
 
     def __init__(self, settings: "CoreSettings") -> None:
         super().__init__(settings)
@@ -42,7 +43,9 @@ class SecretKeeper(secret_keeper.SecretKeeper):
             self.add_module("log_in_settings", settings.LOG_IN_SETTINGS_PATH)
         if settings.PARSING_SETTINGS_PATH:
             self.add_module("parsing_settings", settings.PARSING_SETTINGS_PATH)
-        if settings.REPORTS_PATH:
-            self.add_module("reports", settings.REPORTS_PATH)
         if settings.SCREENING_REPORTS_PATH:
             self.add_module("screening_reports", settings.SCREENING_REPORTS_PATH)
+        if settings.UNLOADING_REPORTS_PATH:
+            self.add_module("unloading_reports", settings.UNLOADING_REPORTS_PATH)
+        if settings.REPORTS_PATH:
+            self.add_module("reports", settings.REPORTS_PATH)

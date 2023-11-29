@@ -22,13 +22,14 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
             counter = 3
             while True:
                 try:
-                    report_page = ScreeningPage(self.driver)
-                    report_page.open()
-                    report_page.filters_button.click()
-                    report_page.age_filter.set(report)
-                    report_page.set_filters(report)
-                    report_page.set_checkboxes(report)
-                    report_page.download_report()
+                    reports_page = ScreeningPage(self.driver)
+                    reports_page.open()
+                    reports_page.filters_button.click()
+                    reports_page.age_filter.set(report)
+                    reports_page.set_filters(report)
+                    reports_page.set_checkboxes(report)
+                    reports_page.download_report()
+
                     self.wait_download()
                     self.move(log_in_settings, report)
                     break

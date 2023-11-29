@@ -53,6 +53,11 @@ class ReportAdmin(EISZAdmin):
     not_required_fields.update(f"filter_title_{x}" for x in range(1, 11))
     not_required_fields.update(f"filter_value_{x}" for x in range(1, 11))
     not_required_fields.update(f"step_{x}" for x in range(1, 11))
+    extra_list_display = {
+        "download": "filter_title_1",
+        "folder": "filter_title_1",
+        "name": "filter_title_1",
+    }
 
 
 model_admins_to_register = [DownloadSettingsAdmin, LogInSettingsAdmin, ParsingSettingsAdmin, ReportAdmin]

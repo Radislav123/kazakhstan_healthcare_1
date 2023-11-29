@@ -17,5 +17,3 @@ class Settings(settings.Settings):
 
         self.JS_CODE_FOLDER = f"{self.JS_CODE_FOLDER}/eisz"
         self.JS_REPLACE_CERTIFICATE_PATH = f"{self.JS_CODE_FOLDER}/replaceCertificate.js"
-
-        self.DOWNLOAD_DATE_FORMAT = "%d.%m.%Y"

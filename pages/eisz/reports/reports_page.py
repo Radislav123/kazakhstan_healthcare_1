@@ -3,8 +3,8 @@ import time
 from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import TimeoutException
 
-from pages.eisz.reports import reports_base_page
 from eisz import models
+from pages.eisz.reports import reports_base_page
 
 
 class FormButtonNotClickedException(Exception):
@@ -71,7 +71,7 @@ class ReportsPage(reports_base_page.ReportsBasePage):
     def open_report(self, report: models.Report) -> None:
         self.open()
 
-        for i in range(1, 8):
+        for i in range(1, 11):
             step_path = report.get_step_path(i)
             if step_path:
                 step_element = ExtendedWebElement(self, f'//td[text() = "{step_path.strip()}"]')
@@ -111,17 +111,14 @@ class ReportsPage(reports_base_page.ReportsBasePage):
                     # filter_title.lower().strip() - не работает
                     f'//span[contains({self.translate}, "{filter_title.strip()}")]/../..'
                 )
-                open_options_button = ExtendedWebElement(
-                    self,
-                    f'{filter_element.xpath}//td[contains(@class, "Button")]'
-                )
+                button = ExtendedWebElement(self, f'{filter_element.xpath}//td[contains(@class, "Button")]')
                 option = ExtendedWebElement(
                     self,
                     # filter_title.value().strip() - не работает
                     f'{filter_element.xpath}//td[contains({self.translate_text}, "{filter_value.strip()}")]'
                 )
 
-                open_options_button.click()
+                button.click()
                 checker = ExtendedWebElement(
                     self,
                     f'{filter_element.xpath}//input[contains({self.translate_value}, "{filter_value.strip()}")]'

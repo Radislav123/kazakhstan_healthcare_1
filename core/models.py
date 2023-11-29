@@ -35,7 +35,7 @@ class CoreSingletonModel(CoreModel):
 
 class CoreSettings(CoreSingletonModel):
     class Meta:
-        verbose_name_plural = "core settings"
+        verbose_name_plural = "настройки проекта"
 
     # https://stackoverflow.com/a/31063104/13186004
     chrome_profile_folder = models.CharField(
@@ -81,15 +81,9 @@ class ParsingSettingsModel(CoreSingletonModel):
     show_browser = models.BooleanField("Показывать браузер", default = False)
 
 
-class ReportModel(CoreModel):
+class FiltersMixin(CoreModel):
     class Meta:
         abstract = True
-
-    download = models.BooleanField("Скачивать")
-    folder = models.CharField("Папка для скачивания", max_length = 1000, null = True)
-    name = models.CharField("Название файла", max_length = 255)
-
-    unique_together = ["folder", "name"]
 
     filter_title_1 = models.CharField("Название фильтра 1", max_length = 100, null = True)
     filter_value_1 = models.CharField("Значение фильтра 1", max_length = 100, null = True)
@@ -117,3 +111,52 @@ class ReportModel(CoreModel):
 
     def get_filter_value(self, index: int) -> str | None:
         return getattr(self, f"filter_value_{index}")
+
+
+class StepsMixin(CoreModel):
+    class Meta:
+        abstract = True
+
+    step_1 = models.CharField("Шаг 1", max_length = 1000, null = True)
+    step_2 = models.CharField("Шаг 2", max_length = 1000, null = True)
+    step_3 = models.CharField("Шаг 3", max_length = 1000, null = True)
+    step_4 = models.CharField("Шаг 4", max_length = 1000, null = True)
+    step_5 = models.CharField("Шаг 5", max_length = 1000, null = True)
+    step_6 = models.CharField("Шаг 6", max_length = 1000, null = True)
+    step_7 = models.CharField("Шаг 7", max_length = 1000, null = True)
+    step_8 = models.CharField("Шаг 8", max_length = 1000, null = True)
+    step_9 = models.CharField("Шаг 9", max_length = 1000, null = True)
+    step_10 = models.CharField("Шаг 10", max_length = 1000, null = True)
+
+    def get_step_path(self, step: int) -> str | None:
+        return getattr(self, f"step_{step}")
+
+
+class CheckboxMixin(CoreModel):
+    class Meta:
+        abstract = True
+
+    checkbox_title_1 = models.CharField("Галочка 1", max_length = 100, null = True)
+    checkbox_title_2 = models.CharField("Галочка 2", max_length = 100, null = True)
+    checkbox_title_3 = models.CharField("Галочка 3", max_length = 100, null = True)
+    checkbox_title_4 = models.CharField("Галочка 4", max_length = 100, null = True)
+    checkbox_title_5 = models.CharField("Галочка 5", max_length = 100, null = True)
+    checkbox_title_6 = models.CharField("Галочка 6", max_length = 100, null = True)
+    checkbox_title_7 = models.CharField("Галочка 7", max_length = 100, null = True)
+    checkbox_title_8 = models.CharField("Галочка 8", max_length = 100, null = True)
+    checkbox_title_9 = models.CharField("Галочка 9", max_length = 100, null = True)
+    checkbox_title_10 = models.CharField("Галочка 10", max_length = 100, null = True)
+
+    def get_checkbox_title(self, index: int) -> str | None:
+        return getattr(self, f"checkbox_title_{index}")
+
+
+class ReportModel(CoreModel):
+    class Meta:
+        abstract = True
+
+    download = models.BooleanField("Скачивать")
+    folder = models.CharField("Папка для скачивания", max_length = 1000, null = True)
+    name = models.CharField("Название файла", max_length = 255)
+
+    unique_together = ["folder", "name"]
