@@ -11,6 +11,7 @@ class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.Cor
     download_settings_model = models.DownloadSettings
 
     def before_command(self, log_in_settings: models.LogInSettings) -> None:
+        super().before_command(log_in_settings)
         log_in_page = LogInPage(self.driver)
         with open(self.get_cookies_path(log_in_settings)) as file:
             cookies = json.load(file)

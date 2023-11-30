@@ -34,9 +34,10 @@ class CoreDownloadCommand(core_browser_command.CoreBrowserCommand):
         log_in_settings.save()
 
     def finally_command(self, log_in_settings: models.LogInSettingsModel) -> None:
-        self.end_time = datetime.datetime.now()
-        log_in_settings.download_duration = self.end_time - self.begin_time
-        log_in_settings.save()
+        if hasattr(self, "begin_time"):
+            self.end_time = datetime.datetime.now()
+            log_in_settings.download_duration = self.end_time - self.begin_time
+            log_in_settings.save()
         if os.path.exists(self.settings.TEMP_DOWNLOAD_FOLDER):
             shutil.rmtree(self.settings.TEMP_DOWNLOAD_FOLDER)
         super().finally_command(log_in_settings)
