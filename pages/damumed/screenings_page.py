@@ -1,6 +1,7 @@
 import time
 
 from parsing_helper.web_elements import ExtendedWebElement
+from selenium.webdriver.common.keys import Keys
 
 from damumed import models
 from pages.damumed import base_page
@@ -29,7 +30,9 @@ class ScreeningsPage(base_page.BasePage):
 
         def set(self, report: models.Screening) -> None:
             self.from_input.send_keys(str(report.from_age))
+            self.from_input.send_keys(Keys.ENTER)
             self.to_input.send_keys(str(report.to_age))
+            self.to_input.send_keys(Keys.ENTER)
 
     def __init__(self, driver) -> None:
         super().__init__(driver)
