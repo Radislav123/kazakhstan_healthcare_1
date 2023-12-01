@@ -55,6 +55,7 @@ class ReportAdmin(EISZAdmin):
         "download": "filter_title_1",
         "folder": "filter_title_1",
         "name": "filter_title_1",
+        **{f"step_{x}": "filter_title_1" for x in range(1, 11)},
     }
 
 
