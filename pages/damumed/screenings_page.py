@@ -39,24 +39,20 @@ class ScreeningsPage(base_page.BasePage):
         self.export_to_excel = ExtendedWebElement(self, '//a[@id= "btnExportToExcel"]')
         self.age_filter = self.AgeFilter(self, '//div[@class = "input-group"]/label[text() = "Возраст: от"]/..')
         self.apply_button = ExtendedWebElement(self, '//button[@class = "btn btn-default" and @onclick]')
+        self.alert_close_button = ExtendedWebElement(self, '//div[contains(@class, "alert")]/button')
 
     def set_filters(self, report: models.Screening) -> None:
         for i in range(1, 11):
             time.sleep(1)
             filter_title = report.get_filter_title(i)
             filter_value = report.get_filter_value(i)
-            try:
-                if filter_title and filter_value:
-                    filter_element = self.Filter(
-                        self,
-                        f'//div[@class = "input-group"]/*[contains(text(), "{filter_title}")]/..'
-                    )
-                    filter_element.button.click()
-                    filter_element.set_option(filter_value)
-            except Exception as error:
-                print(filter_title)
-                print(filter_value)
-                raise error
+            if filter_title and filter_value:
+                filter_element = self.Filter(
+                    self,
+                    f'//div[@class = "input-group"]/*[contains(text(), "{filter_title}")]/..'
+                )
+                filter_element.button.click()
+                filter_element.set_option(filter_value)
 
     def set_checkboxes(self, report: models.Screening) -> None:
         for i in range(1, 11):
