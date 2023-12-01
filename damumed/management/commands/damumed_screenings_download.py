@@ -32,6 +32,7 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
                         # на ПК заказчика это необходимо
                         time.sleep(3)
                         reports_page.filters_button.click()
+                        time.sleep(1)
                         reports_page.age_filter.set(report)
                         reports_page.set_filters(report)
                         reports_page.set_checkboxes(report)
