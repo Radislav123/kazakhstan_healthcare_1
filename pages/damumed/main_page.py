@@ -1,3 +1,5 @@
+import time
+
 from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import TimeoutException
 
@@ -28,6 +30,8 @@ class MainPage(base_page.BasePage):
 
     def log_out(self) -> None:
         self.open()
+        # на ПК заказчика это необходимо
+        time.sleep(3)
 
         try:
             self.log_out_button.click()

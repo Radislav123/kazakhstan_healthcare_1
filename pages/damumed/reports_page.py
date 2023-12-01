@@ -26,6 +26,9 @@ class ReportsPage(base_page.BasePage):
 
     def open_report(self, report: models.Report) -> None:
         self.open()
+        # на ПК заказчика это необходимо
+        time.sleep(3)
+
         step_path = report.get_step_path(1)
         if step_path:
             if step_path:

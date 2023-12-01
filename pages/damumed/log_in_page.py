@@ -1,3 +1,5 @@
+import time
+
 from parsing_helper.web_elements import ExtendedWebElement
 
 from pages.damumed import base_page
@@ -17,6 +19,8 @@ class LogInPage(base_page.BasePage):
 
     def log_in(self, log_in_settings: models.LogInSettings) -> None:
         self.open()
+        # на ПК заказчика это необходимо
+        time.sleep(3)
 
         self.login_input.send_keys(log_in_settings.login)
         self.password_input.send_keys(log_in_settings.password)

@@ -1,4 +1,5 @@
 import json
+import time
 
 from core.management.commands import core_download_command
 from damumed import models
@@ -26,6 +27,8 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
                 try:
                     reports_page = ScreeningsPage(self.driver)
                     reports_page.open()
+                    # на ПК заказчика это необходимо
+                    time.sleep(3)
                     reports_page.filters_button.click()
                     reports_page.age_filter.set(report)
                     reports_page.set_filters(report)

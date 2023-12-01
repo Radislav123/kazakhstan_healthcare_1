@@ -25,7 +25,6 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
             while True:
                 try:
                     reports_page = UnloadingPage(self.driver)
-                    reports_page.open()
                     reports_page.open_report(report)
                     reports_page.set_period()
                     reports_page.set_filters(report)

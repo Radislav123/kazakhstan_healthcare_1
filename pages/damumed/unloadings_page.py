@@ -1,3 +1,5 @@
+import time
+
 from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import TimeoutException
 
@@ -22,6 +24,8 @@ class UnloadingPage(base_page.BasePage):
 
     def open_report(self, report: models.Unloading) -> None:
         self.open()
+        # на ПК заказчика это необходимо
+        time.sleep(3)
 
         for i in range(1, 11):
             step_path = report.get_step_path(i)
