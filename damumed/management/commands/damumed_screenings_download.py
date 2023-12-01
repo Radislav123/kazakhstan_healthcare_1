@@ -21,25 +21,31 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
             main_page.set_cookies(cookies)
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
+        errors = []
         for report in models.Screening.objects.filter(download = True):
-            counter = 3
-            while True:
-                try:
-                    reports_page = ScreeningsPage(self.driver)
-                    reports_page.open()
-                    # на ПК заказчика это необходимо
-                    time.sleep(3)
-                    reports_page.filters_button.click()
-                    reports_page.age_filter.set(report)
-                    reports_page.set_filters(report)
-                    reports_page.set_checkboxes(report)
-                    reports_page.download_report()
+            try:
+                counter = 3
+                while True:
+                    try:
+                        reports_page = ScreeningsPage(self.driver)
+                        reports_page.open()
+                        # на ПК заказчика это необходимо
+                        time.sleep(3)
+                        reports_page.filters_button.click()
+                        reports_page.age_filter.set(report)
+                        reports_page.set_filters(report)
+                        reports_page.set_checkboxes(report)
+                        reports_page.download_report()
 
-                    self.wait_download()
-                    self.move(log_in_settings, report)
-                    break
-                except Exception as error:
-                    counter -= 1
-                    if counter <= 0:
-                        self.remove_not_downloaded()
-                        raise error
+                        self.wait_download()
+                        self.move(log_in_settings, report)
+                        break
+                    except Exception as error:
+                        counter -= 1
+                        if counter <= 0:
+                            self.remove_not_downloaded()
+                            raise error
+            except Exception as error:
+                errors.append(error)
+        if errors:
+            raise core_download_command.DownloadNotFinishedException() from errors[0]
