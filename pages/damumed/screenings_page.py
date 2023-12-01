@@ -45,13 +45,18 @@ class ScreeningsPage(base_page.BasePage):
             time.sleep(1)
             filter_title = report.get_filter_title(i)
             filter_value = report.get_filter_value(i)
-            if filter_title and filter_value:
-                filter_element = self.Filter(
-                    self,
-                    f'//div[@class = "input-group"]/*[contains(text(), "{filter_title}")]/..'
-                )
-                filter_element.button.click()
-                filter_element.set_option(filter_value)
+            try:
+                if filter_title and filter_value:
+                    filter_element = self.Filter(
+                        self,
+                        f'//div[@class = "input-group"]/*[contains(text(), "{filter_title}")]/..'
+                    )
+                    filter_element.button.click()
+                    filter_element.set_option(filter_value)
+            except Exception as error:
+                print(filter_title)
+                print(filter_value)
+                raise error
 
     def set_checkboxes(self, report: models.Screening) -> None:
         for i in range(1, 11):
