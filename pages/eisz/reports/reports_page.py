@@ -91,14 +91,17 @@ class ReportsPage(reports_base_page.ReportsBasePage):
         end_on_change = "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_psCriteria_calEndDate')"
 
         self.driver.execute_script(
-            f"arguments[0].setAttribute('value','{begin_date_string}');\n"
-            f"{begin_on_change};",
+            f"arguments[0].setAttribute('value','{begin_date_string}');",
             self.begin_date_input.selenium_element
         )
         self.driver.execute_script(
-            f"arguments[0].setAttribute('value','{end_date_string}');\n"
-            f"{end_on_change};",
+            f"arguments[0].setAttribute('value','{end_date_string}');",
             self.end_date_input.selenium_element
+        )
+        time.sleep(1)
+        self.driver.execute_script(
+            f"{begin_on_change};\n"
+            f"{end_on_change};"
         )
 
     def set_filters(self, report: models.Report) -> None:
