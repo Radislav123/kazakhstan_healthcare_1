@@ -87,8 +87,15 @@ class ReportsPage(reports_base_page.ReportsBasePage):
         download_settings = models.DownloadSettings.get()
         begin_date_string = download_settings.begin_date.strftime(self.settings.DOWNLOAD_DATE_FORMAT)
         end_date_string = download_settings.end_date.strftime(self.settings.DOWNLOAD_DATE_FORMAT)
-        begin_on_change = "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_psCriteria_calBeginDate')"
-        end_on_change = "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_psCriteria_calEndDate')"
+
+        begin_on_change = [
+            "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_psCriteria_calBeginDate')",
+            "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_fsrCriteria_calBeginDate')"
+        ]
+        end_on_change = [
+            "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_psCriteria_calEndDate')",
+            "aspxETextChanged('MainContent_ASPxSplitter1_viewer_reportCriteria_fsrCriteria_calEndDate')"
+        ]
 
         self.driver.execute_script(
             f"arguments[0].setAttribute('value','{begin_date_string}');",
@@ -99,10 +106,12 @@ class ReportsPage(reports_base_page.ReportsBasePage):
             self.end_date_input.selenium_element
         )
         time.sleep(1)
-        self.driver.execute_script(
-            f"{begin_on_change};\n"
-            f"{end_on_change};"
-        )
+        for function in begin_on_change:
+            self.driver.execute_script(function)
+        time.sleep(1)
+        for function in end_on_change:
+            self.driver.execute_script(function)
+        time.sleep(1)
 
     def set_filters(self, report: models.Report) -> None:
         for i in range(1, 11):
