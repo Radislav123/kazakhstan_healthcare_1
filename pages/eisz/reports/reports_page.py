@@ -133,7 +133,8 @@ class ReportsPage(reports_base_page.ReportsBasePage):
                 button.click()
                 checker = ExtendedWebElement(
                     self,
-                    f'{filter_element.xpath}//input[contains({self.translate_value}, "{filter_value.strip()}")]'
+                    f'{filter_element.xpath}//td[contains({self.translate_text}, "{filter_value.strip()}")'
+                    f' and contains(@class, "Selected")]'
                 )
                 counter = 5
                 while True:
@@ -144,6 +145,15 @@ class ReportsPage(reports_base_page.ReportsBasePage):
                         break
                     except TimeoutException as exception:
                         option.reset()
+                        counter -= 1
+                        if counter <= 0:
+                            raise exception
+                counter = 5
+                while True:
+                    try:
+                        self.loader_hidden.init()
+                        break
+                    except TimeoutException as exception:
                         counter -= 1
                         if counter <= 0:
                             raise exception
