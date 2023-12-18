@@ -61,7 +61,10 @@ class CoreDownloadCommand(core_browser_command.CoreBrowserCommand):
 
         folder = self.download_settings_model.get().folder
         if log_in_settings.folder:
-            folder += f"/{log_in_settings.folder}"
+            if folder not in log_in_settings.folder:
+                folder += f"/{log_in_settings.folder}"
+            else:
+                folder = log_in_settings.folder
         if report.folder:
             folder += f"/{report.folder}"
 
