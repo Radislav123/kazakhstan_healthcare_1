@@ -22,6 +22,16 @@ class UnloadingPage(base_page.BasePage):
         self.loader_hidden = ExtendedWebElement(self, '//body[not(@class = "loading")]')
         self.loader_visible = ExtendedWebElement(self, '//body[@class = "loading"]')
 
+        self.download_start_notification = ExtendedWebElement(self, '//div[@class = "k-notification-wrap"]')
+        self.update_last_button = ExtendedWebElement(
+            self,
+            '//tr[1]/td/div[@class = "cell"]/button/span[text() = "Обновить"]'
+        )
+        self.download_last_button = ExtendedWebElement(
+            self,
+            '//tr[1]/td/div[@class = "cell"]/button/span[text() = "Загрузить"]'
+        )
+
     def open_report(self, report: models.Unloading) -> None:
         self.open()
         # на ПК заказчика это необходимо
@@ -67,14 +77,15 @@ class UnloadingPage(base_page.BasePage):
 
     def download_report(self) -> None:
         self.form_button.click()
+        self.download_start_notification.init()
 
         counter = self.settings.REPORT_FORM_TIMEOUT // self.settings.SELENIUM_DEFAULT_TIMEOUT
         while True:
             try:
-                self.loader_hidden.reset()
-                self.loader_hidden.init()
+                self.download_last_button.click()
                 break
             except TimeoutException as exception:
+                self.update_last_button.click()
                 counter -= 1
                 if counter <= 0:
                     raise exception
