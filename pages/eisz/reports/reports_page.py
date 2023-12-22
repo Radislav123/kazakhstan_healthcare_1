@@ -81,8 +81,16 @@ class ReportsPage(reports_base_page.ReportsBasePage):
 
     def set_period(self) -> None:
         # ожидание прогрузки страницы
-        self.form_button.init(self.form_button.WaitCondition.CLICKABLE)
-        self.form_button.reset()
+        counter = 5
+        while True:
+            try:
+                self.form_button.init(self.form_button.WaitCondition.CLICKABLE)
+                self.form_button.reset()
+                break
+            except TimeoutException as exception:
+                counter -= 1
+                if counter <= 0:
+                    raise exception
 
         download_settings = models.DownloadSettings.get()
         begin_date_string = download_settings.begin_date.strftime(self.settings.DOWNLOAD_DATE_FORMAT)
