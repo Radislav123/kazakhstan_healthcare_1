@@ -4,7 +4,7 @@ from core.management.commands import core_download_command
 from damumed import models
 from damumed.management.commands import damumed_browser_command, damumed_reports_download, damumed_screenings_download, \
     damumed_unloadings_download
-from pages.damumed import MainPage, UnloadingPage
+from pages.damumed import MainPage
 
 
 class Command(damumed_browser_command.DamumedBrowserCommand, core_download_command.CoreDownloadCommand):
@@ -12,7 +12,7 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
 
     def before_command(self, log_in_settings: models.LogInSettings) -> None:
         super().before_command(log_in_settings)
-        main_page = MainPage(self.driver)
+        main_page = MainPage(self.driver, log_in_settings.domain)
         main_page.open()
         main_page.driver.delete_all_cookies()
         main_page.open()

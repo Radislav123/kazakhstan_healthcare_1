@@ -25,6 +25,7 @@ class LogInSettings(DamumedModel, core_models.LogInSettingsModel):
     class Meta:
         verbose_name_plural = "настройки аутентификации"
 
+    domain = models.CharField("Домен", max_length = 100)
     login = models.CharField("Логин", max_length = 100)
     password = models.CharField("Пароль", max_length = 100)
 

@@ -2,6 +2,7 @@ import time
 
 from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import TimeoutException
+from selenium.webdriver import Chrome
 
 from damumed import models
 from pages.damumed import base_page
@@ -9,11 +10,10 @@ from pages.damumed import base_page
 
 # https://stat-pvd.dmed.kz/Unloads
 class UnloadingPage(base_page.BasePage):
-    domain = "stat-pvd.dmed.kz"
     path = "Unloads"
 
-    def __init__(self, driver) -> None:
-        super().__init__(driver)
+    def __init__(self, driver: Chrome, domain: str) -> None:
+        super().__init__(driver, f"stat-{domain}")
 
         self.begin_date_input = ExtendedWebElement(self, '//input[@id = "dtBeginDate"]')
         self.end_date_input = ExtendedWebElement(self, '//input[@id = "dtEndDate"]')

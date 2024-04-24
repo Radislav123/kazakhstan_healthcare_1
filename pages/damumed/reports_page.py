@@ -3,6 +3,7 @@ import time
 
 from parsing_helper.web_elements import ExtendedWebElement
 from selenium.common import ElementClickInterceptedException, TimeoutException
+from selenium.webdriver import Chrome
 
 from damumed import models
 from pages.damumed import base_page
@@ -14,11 +15,10 @@ class TabNotOpenedException(Exception):
 
 # https://stat-pvd.dmed.kz/report
 class ReportsPage(base_page.BasePage):
-    domain = "stat-pvd.dmed.kz"
     path = "report"
 
-    def __init__(self, driver) -> None:
-        super().__init__(driver)
+    def __init__(self, driver: Chrome, domain: str) -> None:
+        super().__init__(driver, f"stat-{domain}")
 
         self.begin_date_input = ExtendedWebElement(self, '//input[@id = "dtpBeginDate"]')
         self.end_date_input = ExtendedWebElement(self, '//input[@id = "dtpEndDate"]')

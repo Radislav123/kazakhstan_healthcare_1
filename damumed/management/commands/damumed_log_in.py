@@ -12,10 +12,10 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_log_in_command
     use_chrome_profile = True
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
-        main_page = MainPage(self.driver)
+        main_page = MainPage(self.driver, log_in_settings.domain)
         main_page.log_out()
 
-        log_in_page = LogInPage(self.driver)
+        log_in_page = LogInPage(self.driver, log_in_settings.domain)
         log_in_page.log_in(log_in_settings)
         main_page.log_out_button.reset()
         main_page.log_out_button.init()

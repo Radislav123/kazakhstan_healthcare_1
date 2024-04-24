@@ -13,7 +13,7 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
 
     def before_command(self, log_in_settings: models.LogInSettings) -> None:
         super().before_command(log_in_settings)
-        main_page = MainPage(self.driver)
+        main_page = MainPage(self.driver, log_in_settings.domain)
         main_page.open()
         main_page.driver.delete_all_cookies()
         main_page.open()
@@ -28,7 +28,7 @@ class Command(damumed_browser_command.DamumedBrowserCommand, core_download_comma
                 counter = 3
                 while True:
                     try:
-                        reports_page = ScreeningsPage(self.driver)
+                        reports_page = ScreeningsPage(self.driver, log_in_settings.domain)
                         reports_page.open()
                         try:
                             reports_page.alert_close_button.click()

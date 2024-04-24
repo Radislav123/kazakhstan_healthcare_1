@@ -13,4 +13,7 @@ class DamumedBrowserCommand(damumed_command.DamumedCommand, core_browser_command
     use_chrome_profile = True
 
     def get_cookies_path(self, log_in_settings: models.LogInSettings) -> str:
-        return self.settings.AUTH_COOKIES_PATH.replace("placeholder", f"damumed_{log_in_settings.id}")
+        return self.settings.AUTH_COOKIES_PATH.replace(
+            "placeholder",
+            f"damumed_{log_in_settings.domain}_{log_in_settings.id}"
+        )
