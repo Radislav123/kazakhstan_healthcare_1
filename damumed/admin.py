@@ -22,7 +22,7 @@ class LogInSettingsAdmin(DamumedAdmin):
     actions = ("download_not_finished",)
 
     def download_not_finished(self, request: HttpRequest, queryset: django_models.QuerySet) -> None:
-        self.message_user(request, "Начато повторное скачивание", messages.SUCCESS)
+        self.message_user(request, "Повторное скачивание закончено", messages.SUCCESS)
 
         not_requested = models.LogInSettings.objects.filter(download = True).exclude(id__in = [x.id for x in queryset])
         not_requested_ids = [x.id for x in not_requested]
