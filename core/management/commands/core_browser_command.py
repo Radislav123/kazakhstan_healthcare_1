@@ -25,7 +25,8 @@ class CoreBrowserCommand(core_command.CoreCommand):
     def handle(self, *args, **options) -> None:
         errors = []
         if self.download_settings_model.get().download:
-            logins = self.log_in_settings_model.objects.filter(download = True)
+            # todo: remove id filter
+            logins = self.log_in_settings_model.objects.filter(download = True, id = 5)
             for log_in_settings in logins:
                 try:
                     self.before_command(log_in_settings)
