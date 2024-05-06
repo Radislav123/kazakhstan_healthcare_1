@@ -42,10 +42,9 @@ class SignatureLogInPage(base_page.BasePage):
     def read_certificate(cls, log_in_settings: models.LogInSettings) -> dict[str, str]:
         data = {}
         with open(log_in_settings.digital_signature_path, "rb") as file:
-            _, certificate, _ = pkcs12.load_key_and_certificates(
-                file.read(),
-                log_in_settings.digital_signature_password.encode()
-            )
+            file_data = file.read()
+            password = log_in_settings.digital_signature_password.encode()
+            _, certificate, _ = pkcs12.load_key_and_certificates(file_data, password)
             data["not_before"] = cls.prepare_date(certificate.not_valid_before)
             data["not_after"] = cls.prepare_date(certificate.not_valid_after)
             data["certificate"] = "".join(certificate.public_bytes(Encoding.PEM).decode().split('\n')[1:-2])
