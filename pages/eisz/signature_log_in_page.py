@@ -1,8 +1,13 @@
 import datetime
+import subprocess
+import time
 
 import cryptography.x509.name
+import pyautogui
+import pywinauto
 from cryptography.hazmat.primitives.serialization import Encoding, pkcs12
 from parsing_helper.web_elements import ExtendedWebElement
+from pywinauto.controls.hwndwrapper import DialogWrapper
 
 from eisz import models
 from pages.eisz import base_page
@@ -60,11 +65,60 @@ class SignatureLogInPage(base_page.BasePage):
             script = script.replace(f"{key}_placeholder", value)
         return script
 
+    @classmethod
+    def get_process_ids_by_name(cls, name: str) -> list[int]:
+        return [key for key, value in cls.get_all_processes().items() if value.lower().startswith(name.lower())]
+
+    @staticmethod
+    def get_all_processes() -> dict[int, str]:
+        start = 1
+
+        output = str(subprocess.check_output(["tasklist", "/FO", "csv"]))
+        processes = output.split('\\r\\n')[start:-1]
+        processes = [[y.strip('\"') for y in x.split(',')] for x in processes]
+
+        processes = {int(x[1]): x[0] for x in processes}
+        return processes
+
+    @classmethod
+    def enable_popup_window(cls) -> None:
+        process_name = "java"
+        process_ids = cls.get_process_ids_by_name("java")
+        if len(process_ids) > 1:
+            raise ValueError(f"There are more then 1 {process_name} processes.")
+        process_id = process_ids[0]
+        app = pywinauto.Application(backend = "uia").connect(process = process_id)
+
+        window_class_name = "SunAwtDialog"
+        dialog_window: pywinauto.WindowSpecification | DialogWrapper = app.window(class_name = window_class_name)
+
+        dialog_window.set_focus()
+
+    @staticmethod
+    def open_new_certificate(log_in_settings: models.LogInSettings) -> None:
+        timeout = 1
+
+        time.sleep(timeout)
+        pyautogui.write(log_in_settings.digital_signature_path)
+        pyautogui.press("enter")
+
+        time.sleep(timeout)
+        pyautogui.write(log_in_settings.digital_signature_password)
+        pyautogui.press("enter")
+
+        time.sleep(timeout)
+        pyautogui.press("enter")
+
     def log_in(self, log_in_settings: models.LogInSettings) -> None:
         # не надо открывать страницу, так как это сбрасывает ввод ЭЦП
         # self.open()
 
-        js_script = self.get_js_script(log_in_settings)
-        self.driver.execute_script(js_script)
+        try:
+            js_script = self.get_js_script(log_in_settings)
+            self.driver.execute_script(js_script)
+        except ValueError:
+            self.choose_certificate_button.click()
+            self.enable_popup_window()
+            self.open_new_certificate(log_in_settings)
 
         self.enter_button.click()
