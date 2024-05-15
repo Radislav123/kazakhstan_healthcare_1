@@ -83,7 +83,7 @@ class SignatureLogInPage(base_page.BasePage):
     @classmethod
     def enable_popup_window(cls) -> None:
         process_name = "java"
-        process_ids = cls.get_process_ids_by_name("java")
+        process_ids = cls.get_process_ids_by_name(process_name)
         if len(process_ids) > 1:
             raise ValueError(f"There are more then 1 {process_name} processes.")
         process_id = process_ids[0]
