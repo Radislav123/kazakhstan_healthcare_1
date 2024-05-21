@@ -37,7 +37,8 @@ class CoreBrowserCommand(core_command.CoreCommand):
                 finally:
                     self.finally_command(log_in_settings)
 
-            if errors:
+            show_errors = False
+            if show_errors and errors:
                 self.logger.exception("========================================")
                 for error in errors:
                     self.logger.exception("----------------------------------------")
