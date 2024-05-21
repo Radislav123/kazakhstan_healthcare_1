@@ -94,22 +94,21 @@ class SignatureLogInPage(base_page.BasePage):
 
         dialog_window.set_focus()
 
-    @staticmethod
-    def open_new_certificate(log_in_settings: models.LogInSettings) -> None:
+    def open_new_certificate(self, log_in_settings: models.LogInSettings) -> None:
         timeout = 1
 
-        print(datetime.datetime.now())
         time.sleep(timeout)
+        self.enable_popup_window()
         pyautogui.write(log_in_settings.digital_signature_path)
         pyautogui.press("enter")
 
-        print(datetime.datetime.now())
         time.sleep(timeout)
+        self.enable_popup_window()
         pyautogui.write(log_in_settings.digital_signature_password)
         pyautogui.press("enter")
 
-        print(datetime.datetime.now())
         time.sleep(timeout)
+        self.enable_popup_window()
         pyautogui.press("enter")
 
     def log_in(self, log_in_settings: models.LogInSettings) -> None:
@@ -121,7 +120,6 @@ class SignatureLogInPage(base_page.BasePage):
             self.driver.execute_script(js_script)
         except ValueError:
             self.choose_certificate_button.click()
-            self.enable_popup_window()
             self.open_new_certificate(log_in_settings)
 
         self.enter_button.click()
