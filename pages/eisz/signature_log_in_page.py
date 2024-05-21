@@ -98,10 +98,14 @@ class SignatureLogInPage(base_page.BasePage):
     def open_new_certificate(log_in_settings: models.LogInSettings) -> None:
         timeout = 1
 
+        # todo: remove print
+        print(log_in_settings.digital_signature_path)
         time.sleep(timeout)
         pyautogui.write(log_in_settings.digital_signature_path)
         pyautogui.press("enter")
 
+        # todo: remove print
+        print(log_in_settings.digital_signature_password)
         time.sleep(timeout)
         pyautogui.write(log_in_settings.digital_signature_password)
         pyautogui.press("enter")
