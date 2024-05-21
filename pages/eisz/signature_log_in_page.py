@@ -99,16 +99,13 @@ class SignatureLogInPage(base_page.BasePage):
         timeout = 1
 
         time.sleep(timeout)
-        # pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.01)
-        # pyautogui.write(log_in_settings.digital_signature_path)
         pyperclip.copy(log_in_settings.digital_signature_path)
-        # pyautogui.write(pyperclip.paste())
         pyautogui.hotkey("ctrl", "v")
-        time.sleep(10)
         pyautogui.press("enter")
 
         time.sleep(timeout)
-        pyautogui.write(log_in_settings.digital_signature_password)
+        pyperclip.copy(log_in_settings.digital_signature_password)
+        pyautogui.hotkey("ctrl", "v")
         pyautogui.press("enter")
 
         time.sleep(timeout)
