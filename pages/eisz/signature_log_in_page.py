@@ -99,7 +99,7 @@ class SignatureLogInPage(base_page.BasePage):
         timeout = 1
 
         time.sleep(timeout)
-        pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.01)
+        pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.1)
         # pyautogui.write(log_in_settings.digital_signature_path)
         # todo: remove 2 lines
         print(log_in_settings.digital_signature_path)
