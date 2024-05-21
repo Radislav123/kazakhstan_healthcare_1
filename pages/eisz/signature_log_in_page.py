@@ -95,14 +95,17 @@ class SignatureLogInPage(base_page.BasePage):
         dialog_window.set_focus()
 
     @staticmethod
-    def open_new_certificate(log_in_settings: models.LogInSettings) -> None:
+    def temp(data: str) -> None:
+        for character in data:
+            pyautogui.press(character)
+
+    def open_new_certificate(self, log_in_settings: models.LogInSettings) -> None:
         timeout = 1
 
         time.sleep(timeout)
-        pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.1)
+        # pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.1)
         # pyautogui.write(log_in_settings.digital_signature_path)
-        # todo: remove 2 lines
-        print(log_in_settings.digital_signature_path)
+        self.temp(log_in_settings.digital_signature_path)
         time.sleep(10)
         pyautogui.press("enter")
 
