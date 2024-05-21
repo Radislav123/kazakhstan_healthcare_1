@@ -4,6 +4,7 @@ import time
 
 import cryptography.x509.name
 import pyautogui
+import pyperclip
 import pywinauto
 from cryptography.hazmat.primitives.serialization import Encoding, pkcs12
 from parsing_helper.web_elements import ExtendedWebElement
@@ -98,8 +99,11 @@ class SignatureLogInPage(base_page.BasePage):
         timeout = 1
 
         time.sleep(timeout)
-        pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.01)
+        # pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.01)
         # pyautogui.write(log_in_settings.digital_signature_path)
+        pyperclip.copy(log_in_settings.digital_signature_path)
+        pyautogui.write(pyperclip.paste())
+        # pyautogui.hotkey("ctrl", "v")
         time.sleep(10)
         pyautogui.press("enter")
 
