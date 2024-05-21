@@ -102,8 +102,8 @@ class SignatureLogInPage(base_page.BasePage):
         # pyautogui.typewrite(log_in_settings.digital_signature_path, interval = 0.01)
         # pyautogui.write(log_in_settings.digital_signature_path)
         pyperclip.copy(log_in_settings.digital_signature_path)
-        pyautogui.write(pyperclip.paste())
-        # pyautogui.hotkey("ctrl", "v")
+        # pyautogui.write(pyperclip.paste())
+        pyautogui.hotkey("ctrl", "v")
         time.sleep(10)
         pyautogui.press("enter")
 
