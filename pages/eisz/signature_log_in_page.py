@@ -97,7 +97,7 @@ class SignatureLogInPage(base_page.BasePage):
     @staticmethod
     def temp(data: str) -> None:
         for character in data:
-            pyautogui.press(character)
+            pyautogui.press(character, interval = 0.1)
 
     def open_new_certificate(self, log_in_settings: models.LogInSettings) -> None:
         timeout = 1
