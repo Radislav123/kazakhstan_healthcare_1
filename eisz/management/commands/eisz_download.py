@@ -3,7 +3,7 @@ import json
 from core.management.commands import core_download_command
 from eisz import models
 from eisz.management.commands import eisz_browser_command
-from pages.eisz import LogInPage
+from pages.eisz import LogInPage, MainPage
 from pages.eisz.reports import ReportsLogInPage, ReportsPage
 
 
@@ -16,6 +16,11 @@ class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.Cor
         with open(self.get_cookies_path(log_in_settings)) as file:
             cookies = json.load(file)
             log_in_page.set_cookies(cookies)
+
+    def finally_command(self, log_in_settings: models.LogInSettings) -> None:
+        main_page = MainPage(self.driver)
+        main_page.log_out()
+        super().finally_command(log_in_settings)
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
         errors = []
