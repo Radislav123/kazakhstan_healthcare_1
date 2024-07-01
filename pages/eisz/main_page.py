@@ -17,7 +17,9 @@ class MainPage(base_page.BasePage):
 
     def log_out(self) -> None:
         self.open()
+        time.sleep(1)
         self.profile_button.click()
+        time.sleep(1)
         self.exit_button.click()
         timer = 5
         for i in range(timer):
