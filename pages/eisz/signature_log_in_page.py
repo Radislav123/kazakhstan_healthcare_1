@@ -124,4 +124,5 @@ class SignatureLogInPage(base_page.BasePage):
             self.enable_popup_window()
             self.open_new_certificate(log_in_settings)
 
+        time.sleep(1)
         self.enter_button.click()
