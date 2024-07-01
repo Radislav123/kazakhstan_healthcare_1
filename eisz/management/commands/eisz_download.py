@@ -53,3 +53,5 @@ class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.Cor
                     errors.append(error)
             if errors:
                 raise core_download_command.DownloadNotFinishedException() from errors[0]
+        else:
+            raise core_download_command.DownloadNotFinishedException("Not logged in")
