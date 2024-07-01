@@ -18,8 +18,11 @@ class Command(eisz_browser_command.EISZBrowserCommand, core_download_command.Cor
             log_in_page.set_cookies(cookies)
 
     def finally_command(self, log_in_settings: models.LogInSettings) -> None:
-        main_page = MainPage(self.driver)
-        main_page.log_out()
+        try:
+            main_page = MainPage(self.driver)
+            main_page.log_out()
+        except Exception:
+            pass
         super().finally_command(log_in_settings)
 
     def run(self, log_in_settings: models.LogInSettings) -> None:
