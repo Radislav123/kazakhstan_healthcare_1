@@ -114,6 +114,7 @@ class SignatureLogInPage(base_page.BasePage):
     def log_in(self, log_in_settings: models.LogInSettings) -> None:
         # не надо открывать страницу, так как это сбрасывает ввод ЭЦП
         # self.open()
+        time.sleep(1)
 
         try:
             js_script = self.get_js_script(log_in_settings)

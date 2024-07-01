@@ -1,3 +1,5 @@
+import time
+
 from parsing_helper.web_elements import ExtendedWebElement
 
 from pages.eisz import base_page
@@ -16,6 +18,7 @@ class LogInPage(base_page.BasePage):
 
     def log_in(self, iin: int, password: str) -> None:
         self.open()
+        time.sleep(1)
         self.iin_input.send_keys(str(iin))
         self.password_input.send_keys(password)
         self.enter_button.click()
