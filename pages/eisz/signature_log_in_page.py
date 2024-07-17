@@ -98,6 +98,8 @@ class SignatureLogInPage(base_page.BasePage):
     def open_new_certificate(self, log_in_settings: models.LogInSettings) -> None:
         timeout = 1
 
+        print(log_in_settings.digital_signature_path)
+        print(log_in_settings.digital_signature_password)
         time.sleep(timeout)
         pyperclip.copy(log_in_settings.digital_signature_path)
         pyautogui.hotkey("ctrl", "v")
