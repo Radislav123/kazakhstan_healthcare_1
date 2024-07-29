@@ -91,8 +91,11 @@ class CoreBrowserCommand(core_command.CoreCommand):
         driver_service = ChromeService(executable_path = driver_manager)
         print(3)
 
-        temp = self.driver = Chrome(options = driver_options, service = driver_service)
-        print(temp)
+        try:
+            self.driver = Chrome(options = driver_options, service = driver_service)
+        except Exception as error:
+            print(error)
+            raise error
         self.driver.maximize_window()
         print(4)
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
