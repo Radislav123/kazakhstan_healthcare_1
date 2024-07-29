@@ -67,6 +67,7 @@ class CoreBrowserCommand(core_command.CoreCommand):
                     pass
 
     def prepare_chrome_driver(self) -> None:
+        print(1)
         driver_options = ChromeOptions()
         # этот параметр тоже нужен, так как в режиме headless с некоторыми элементами нельзя взаимодействовать
         driver_options.add_argument("--no-sandbox")
@@ -84,13 +85,17 @@ class CoreBrowserCommand(core_command.CoreCommand):
             {"download.default_directory": self.settings.TEMP_DOWNLOAD_FOLDER}
         )
 
+        print(2)
         cache_manager = DriverCacheManager(root_dir = f"{pathlib.Path.cwd()}/webdrivers/{self.settings.APP_NAME}")
         driver_manager = ChromeDriverManager(cache_manager = cache_manager).install()
         driver_service = ChromeService(executable_path = driver_manager)
+        print(3)
 
         self.driver = Chrome(options = driver_options, service = driver_service)
         self.driver.maximize_window()
+        print(4)
         self.driver.execute_cdp_cmd("Network.setCacheDisabled", {"cacheDisabled": True})
+        print(5)
 
     def run(self, log_in_settings: models.LogInSettingsModel) -> None:
         raise NotImplementedError()
